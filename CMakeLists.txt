@@ -16,7 +16,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 
 set(
         ASYFFI_HELPER_SRC_FILES
-        basictypes
+        types threads item
 )
 
 list(

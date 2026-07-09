@@ -15,5 +15,11 @@ constexpr Asy::TypeInfo createArrayType(Asy::TypeInfo const* baseType, size_t co
         .extraData = {.arrayTypeInfo = {.typeOfItem = baseType, .dimension = dimension}}
     };
 }
+constexpr Asy::FnArgMetadata createFnArgMetadata(
+    Asy::TypeInfo const& type, char const* name, bool const& optional, bool const& explicitArgs
+)
+{
+    return {.type = type, .name = name, .optional = optional, .explicitArgs = explicitArgs};
+}
 
 } // namespace AsyFfiHelpers::Types
