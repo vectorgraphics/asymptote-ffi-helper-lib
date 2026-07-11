@@ -1,4 +1,5 @@
 #include "asyffihelpers/threads.h"
+#include <utility>
 
 namespace AsyFfiHelpers::Threads
 {
@@ -18,7 +19,7 @@ ThreadGcContext::ThreadGcContext(IAsyContext* ctx)
 }
 ThreadGcContext::~ThreadGcContext()
 {
-    if (stackBaseData.size() == 0 || context == nullptr)
+    if (stackBaseData.empty() || context == nullptr)
     {
         return;
     }

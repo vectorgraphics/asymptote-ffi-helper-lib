@@ -6,8 +6,8 @@
 namespace AsyFfiHelpers::Types
 {
 
-constexpr Asy::TypeInfo createBasicType(Asy::BaseTypes const& type);
-constexpr Asy::TypeInfo createArrayType(Asy::TypeInfo const* baseType, size_t const& dimension);
+Asy::TypeInfo createBasicType(Asy::BaseTypes const& type);
+Asy::TypeInfo createArrayType(Asy::TypeInfo const* baseType, size_t const& dimension = 1);
 
 // base types
 #define ASYFFI_HELPER_DEC_BASIC_TYPE(TY_NAME, ENUM_TYPE) \
@@ -22,12 +22,13 @@ ASYFFI_HELPER_DEC_BASIC_TYPE(BOOL, Boolean);
 ASYFFI_HELPER_DEC_BASIC_TYPE(TRANSFORM, Transform);
 ASYFFI_HELPER_DEC_BASIC_TYPE(PATH, Path);
 ASYFFI_HELPER_DEC_BASIC_TYPE(PATH3, Path3);
+ASYFFI_HELPER_DEC_BASIC_TYPE(VOID, Void);
 
 #undef ASYFFI_HELPER_DEC_BASIC_TYPE
 
 // function types
 
-constexpr Asy::FnArgMetadata createFnArgMetadata(
+Asy::FnArgMetadata createFnArgMetadata(
     Asy::TypeInfo const& type, char const* name, bool const& optional = false,
     bool const& explicitArgs = false
 );
