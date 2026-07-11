@@ -3,6 +3,9 @@ include(FetchContent)
 
 project(asyffi-helper-lib CXX)
 
+# whether to enable compilation of examples. In production environment, this
+# should be turned off to speed cmake loading (unless if examples are needed)
+option(ASYFFI_HELPER_LOAD_EXAMPLES "Whether to enable loading of example targets" FALSE)
 
 set(
         ASYFFI_HEADER_DOWNLOAD_URL
@@ -50,3 +53,7 @@ target_include_directories(
         asyffi-helper-lib
         PUBLIC ${asyffi-dll-dl_SOURCE_DIR} include
 )
+
+if (ASYFFI_HELPER_LOAD_EXAMPLES)
+    add_subdirectory(examples)
+endif()
