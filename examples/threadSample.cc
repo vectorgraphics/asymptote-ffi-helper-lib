@@ -45,10 +45,10 @@ ASY_FOREIGN_FUNC_SIG(createRandomPens)
                     };
 
                     IAsyPen* newPen = context->createNewPen(
-                        nullptr, ASY_PEN_DEFAULT_WIDTH, nullptr, nullptr, 0.0, 0.0, Asy::PenColorSpace::Rgb, col,
-                        nullptr, Asy::PenFillRule::Default, nullptr, Asy::PenBaseLine::Default,
-                        Asy::PenLineCap::Default, Asy::PenLineJoin::Default, 0.0,
-                        Asy::PenOverwrites::Default, nullptr
+                        nullptr, ASY_PEN_DEFAULT_WIDTH, nullptr, nullptr, 0.0, 0.0,
+                        Asy::PenColorSpace::Rgb, col, nullptr, Asy::PenFillRule::Default, nullptr,
+                        Asy::PenBaseLine::Default, Asy::PenLineCap::Default,
+                        Asy::PenLineJoin::Default, 0.0, Asy::PenOverwrites::Default, nullptr
                     );
                     IAsyItem* newItem = context->createBlankItem();
                     AsyFfiHelpers::Item::setItemPtr(newItem, newPen);
@@ -112,14 +112,14 @@ ASY_FOREIGN_FUNC_SIG(createRandomPoints)
 
 REGISTER_FN_SIG(threadSample)
 {
-    std::vector const randomPointArgs {AsyFfiHelpers::Types::createFnArgMetadata(
-        AsyFfiHelpers::TypeObjects::Basic<int64_t>::value, "numberOfPoints"
-    )};
+    std::vector const randomPointArgs {
+        AsyFfiHelpers::Types::createFnArgMetadata(AsyFfiHelpers::Types::INT_TYPE, "numberOfPoints")
+    };
 
     registerer->registerFunction(
         ASYFFI_FN_NAME_AND_ADDR(createRandomPoints),
         AsyFfiHelpers::Functions::createFunctionTypeMetadata(
-            AsyFfiHelpers::TypeObjects::Array<AsyFfiHelpers::TypeObjects::Tuple<2>>(),
+            AsyFfiHelpers::Types::createArrayType(&AsyFfiHelpers::Types::PAIR_TYPE),
             STD_CONTAINER_SIZE_AND_DATA(randomPointArgs)
         )
     );
@@ -127,7 +127,7 @@ REGISTER_FN_SIG(threadSample)
     registerer->registerFunction(
         ASYFFI_FN_NAME_AND_ADDR(createRandomPens),
         AsyFfiHelpers::Functions::createFunctionTypeMetadata(
-            AsyFfiHelpers::TypeObjects::Array<AsyFfiHelpers::TypeObjects::Basic<IAsyPen>>(),
+            AsyFfiHelpers::Types::createArrayType(&AsyFfiHelpers::Types::PEN_TYPE),
             STD_CONTAINER_SIZE_AND_DATA(randomPointArgs)
         )
     );
