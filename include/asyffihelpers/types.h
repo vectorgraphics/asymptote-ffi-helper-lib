@@ -11,7 +11,7 @@ Asy::TypeInfo createArrayType(Asy::TypeInfo const* baseType, size_t const& dimen
 
 // base types
 #define ASYFFI_HELPER_DEC_BASIC_TYPE(TY_NAME, ENUM_TYPE) \
-    Asy::TypeInfo const TY_NAME##_TYPE = {.baseType = Asy::ENUM_TYPE}
+    Asy::TypeInfo const TY_NAME##_TYPE = {.baseType = Asy::BaseTypes::ENUM_TYPE}
 
 ASYFFI_HELPER_DEC_BASIC_TYPE(INT, Integer);
 ASYFFI_HELPER_DEC_BASIC_TYPE(REAL, Real);

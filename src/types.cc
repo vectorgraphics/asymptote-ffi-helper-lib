@@ -11,7 +11,7 @@ Asy::TypeInfo createBasicType(Asy::BaseTypes const& type)
 Asy::TypeInfo createArrayType(Asy::TypeInfo const* baseType, size_t const& dimension)
 {
     return {
-        .baseType = Asy::ArrayType,
+        .baseType = Asy::BaseTypes::ArrayType,
         .extraData = {.arrayTypeInfo = {.typeOfItem = baseType, .dimension = dimension}}
     };
 }
