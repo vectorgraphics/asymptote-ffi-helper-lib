@@ -27,7 +27,6 @@ ASYFFI_TYPE_TEMPLATE_DECLARE_BASIC_TYPE(IAsyPath);
 ASYFFI_TYPE_TEMPLATE_DECLARE_BASIC_TYPE(IAsyPath3);
 ASYFFI_TYPE_TEMPLATE_DECLARE_BASIC_TYPE(void);
 
-
 struct String
 {
     static Asy::TypeInfo const value;
@@ -69,6 +68,26 @@ public:
         .baseType = Asy::BaseTypes::ArrayType,
         .extraData = {.arrayTypeInfo = {.typeOfItem = &baseType, .dimension = dimension}}
     };
+};
+
+template<typename ReturnTypeObject>
+struct Function
+{
+private:
+    static inline Asy::TypeInfo const returnType = ReturnTypeObject::value;
+
+public:
+    static Asy::TypeInfo createValue(size_t const& numArgs, Asy::FnArgMetadata const* ptrArgs)
+    {
+        return {
+            .baseType = Asy::BaseTypes::FunctionType,
+            .extraData = {
+                .functionTypeInfo = {
+                    .returnType = &returnType, .numArgs = numArgs, .argInfoPtr = ptrArgs
+                }
+            }
+        };
+    }
 };
 
 } // namespace AsyFfiHelpers::TypeObjects
