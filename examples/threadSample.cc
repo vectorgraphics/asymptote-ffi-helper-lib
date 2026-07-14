@@ -1,5 +1,6 @@
 #include <asyffi.h>
 #include "asyffihelper.h"
+#include "asyffihelpers/typesTemplates.h"
 
 #include <random>
 #include <vector>
@@ -13,6 +14,58 @@ DECLARE_REGISTER_FN(threadSample);
 
 namespace
 {
+ASY_FOREIGN_FUNC_SIG(createRandomPens)
+{
+    ASYFFI_CONTEXT_HELPER
+
+    auto numberOfPoints = AsyFfiHelpers::Item::getItem<int64_t>(args->getNumberedArg(0));
+    IAsyArray* newArray = context->createNewArray(numberOfPoints);
+
+    size_t const threadCount = std::thread::hardware_concurrency();
+    std::vector<std::thread> threads;
+    threads.reserve(threadCount);
+
+    std::random_device rd;
+    for (size_t i = 0; i < threadCount; ++i)
+    {
+        threads.emplace_back(ctxHelper.createNewThread(
+            [context, newArray, threadCount,
+             numberOfPoints](unsigned int const seed, size_t const idx)
+            {
+                std::mt19937_64 randEng(seed);
+                std::uniform_real_distribution<> randDist(0, 1.0);
+
+                for (size_t runIndex = idx; runIndex < numberOfPoints; runIndex += threadCount)
+                {
+                    Asy::PenColor col {
+                        .red = randDist(randEng),
+                        .green = randDist(randEng),
+                        .blue = randDist(randEng),
+                        .grey = 0
+                    };
+
+                    IAsyPen* newPen = context->createNewPen(
+                        nullptr, 1.0, nullptr, nullptr, 0.0, 0.0, Asy::PenColorSpace::Rgb, col,
+                        nullptr, Asy::PenFillRule::Default, nullptr, Asy::PenBaseLine::Default,
+                        Asy::PenLineCap::Default, Asy::PenLineJoin::Default, 0.0,
+                        Asy::PenOverwrites::Default, nullptr
+                    );
+                    IAsyItem* newItem = context->createBlankItem();
+                    AsyFfiHelpers::Item::setItemPtr(newItem, newPen);
+                    newArray->setItem(runIndex, newItem);
+                }
+            },
+            rd(), i
+        ));
+    }
+
+    for (auto& runThread : threads)
+    {
+        runThread.join();
+    }
+
+    returnValue->setRawPointer(newArray);
+}
 
 ASY_FOREIGN_FUNC_SIG(createRandomPoints)
 {
@@ -59,14 +112,22 @@ ASY_FOREIGN_FUNC_SIG(createRandomPoints)
 
 REGISTER_FN_SIG(threadSample)
 {
-    std::vector const randomPointArgs {
-        AsyFfiHelpers::Types::createFnArgMetadata(AsyFfiHelpers::Types::INT_TYPE, "numberOfPoints")
-    };
+    std::vector const randomPointArgs {AsyFfiHelpers::Types::createFnArgMetadata(
+        AsyFfiHelpers::TypeObjects::Basic<int64_t>::value, "numberOfPoints"
+    )};
 
     registerer->registerFunction(
         ASYFFI_FN_NAME_AND_ADDR(createRandomPoints),
         AsyFfiHelpers::Functions::createFunctionTypeMetadata(
-            AsyFfiHelpers::Types::createArrayType(&AsyFfiHelpers::Types::PAIR_TYPE),
+            AsyFfiHelpers::TypeObjects::Array<AsyFfiHelpers::TypeObjects::Tuple<2>>::value,
+            STD_CONTAINER_SIZE_AND_DATA(randomPointArgs)
+        )
+    );
+
+    registerer->registerFunction(
+        ASYFFI_FN_NAME_AND_ADDR(createRandomPens),
+        AsyFfiHelpers::Functions::createFunctionTypeMetadata(
+            AsyFfiHelpers::TypeObjects::Array<AsyFfiHelpers::TypeObjects::Basic<IAsyPen>>::value,
             STD_CONTAINER_SIZE_AND_DATA(randomPointArgs)
         )
     );
