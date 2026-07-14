@@ -1,6 +1,7 @@
 #pragma once
 #include "asyffi.h"
 #include <cstdint>
+#include <vector>
 
 #define ASYFFI_TYPE_TEMPLATE_DECLARE_BASIC_TYPE(TYPE_NAME) \
     template<> \
@@ -21,11 +22,11 @@ struct Basic
 ASYFFI_TYPE_TEMPLATE_DECLARE_BASIC_TYPE(int64_t);
 ASYFFI_TYPE_TEMPLATE_DECLARE_BASIC_TYPE(double);
 ASYFFI_TYPE_TEMPLATE_DECLARE_BASIC_TYPE(bool);
+ASYFFI_TYPE_TEMPLATE_DECLARE_BASIC_TYPE(void);
 ASYFFI_TYPE_TEMPLATE_DECLARE_BASIC_TYPE(IAsyPen);
 ASYFFI_TYPE_TEMPLATE_DECLARE_BASIC_TYPE(IAsyTransform);
 ASYFFI_TYPE_TEMPLATE_DECLARE_BASIC_TYPE(IAsyPath);
 ASYFFI_TYPE_TEMPLATE_DECLARE_BASIC_TYPE(IAsyPath3);
-ASYFFI_TYPE_TEMPLATE_DECLARE_BASIC_TYPE(void);
 
 struct String
 {
@@ -61,10 +62,15 @@ template<typename TypeObject, size_t dimension = 1>
 struct Array
 {
 private:
-    static inline Asy::TypeInfo const baseType = TypeObject::value;
+    Asy::TypeInfo const baseType = TypeObject::value;
 
 public:
-    static inline Asy::TypeInfo const value = {
+    operator Asy::TypeInfo() const
+    {
+        return value;
+    }
+
+    Asy::TypeInfo const value = {
         .baseType = Asy::BaseTypes::ArrayType,
         .extraData = {.arrayTypeInfo = {.typeOfItem = &baseType, .dimension = dimension}}
     };
@@ -74,19 +80,49 @@ template<typename ReturnTypeObject>
 struct Function
 {
 private:
-    static inline Asy::TypeInfo const returnType = ReturnTypeObject::value;
+    Asy::TypeInfo const returnType = ReturnTypeObject::value;
+
+    // this isn't always used
+    std::vector<Asy::FnArgMetadata> const optionalArgMetadata;
 
 public:
-    static Asy::TypeInfo createValue(size_t const& numArgs, Asy::FnArgMetadata const* ptrArgs)
+    Asy::TypeInfo const value;
+
+    operator Asy::TypeInfo() const
     {
-        return {
-            .baseType = Asy::BaseTypes::FunctionType,
-            .extraData = {
-                .functionTypeInfo = {
-                    .returnType = &returnType, .numArgs = numArgs, .argInfoPtr = ptrArgs
-                }
-            }
-        };
+        return value;
+    }
+
+    Function() : Function(0, nullptr)
+    {
+    }
+
+    Function(size_t const& numArgs, Asy::FnArgMetadata const* ptrArgs)
+        : value {
+              .baseType = Asy::BaseTypes::FunctionType,
+              .extraData = {
+                  .functionTypeInfo = {
+                      .returnType = &returnType, .numArgs = numArgs, .argInfoPtr = ptrArgs
+                  }
+              }
+          }
+
+    {
+    }
+
+    Function(std::initializer_list<Asy::FnArgMetadata> const args)
+        : optionalArgMetadata {args}, value {
+                                          .baseType = Asy::BaseTypes::FunctionType,
+                                          .extraData = {
+                                              .functionTypeInfo = {
+                                                  .returnType = &returnType,
+                                                  .numArgs = args.size(),
+                                                  .argInfoPtr = optionalArgMetadata.data()
+                                              }
+                                          }
+                                      }
+
+    {
     }
 };
 
