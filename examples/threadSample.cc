@@ -45,7 +45,7 @@ ASY_FOREIGN_FUNC_SIG(createRandomPens)
                     };
 
                     IAsyPen* newPen = context->createNewPen(
-                        nullptr, 1.0, nullptr, nullptr, 0.0, 0.0, Asy::PenColorSpace::Rgb, col,
+                        nullptr, ASY_PEN_DEFAULT_WIDTH, nullptr, nullptr, 0.0, 0.0, Asy::PenColorSpace::Rgb, col,
                         nullptr, Asy::PenFillRule::Default, nullptr, Asy::PenBaseLine::Default,
                         Asy::PenLineCap::Default, Asy::PenLineJoin::Default, 0.0,
                         Asy::PenOverwrites::Default, nullptr
@@ -119,7 +119,7 @@ REGISTER_FN_SIG(threadSample)
     registerer->registerFunction(
         ASYFFI_FN_NAME_AND_ADDR(createRandomPoints),
         AsyFfiHelpers::Functions::createFunctionTypeMetadata(
-            AsyFfiHelpers::TypeObjects::Array<AsyFfiHelpers::TypeObjects::Tuple<2>>::value,
+            AsyFfiHelpers::TypeObjects::Array<AsyFfiHelpers::TypeObjects::Tuple<2>>(),
             STD_CONTAINER_SIZE_AND_DATA(randomPointArgs)
         )
     );
@@ -127,7 +127,7 @@ REGISTER_FN_SIG(threadSample)
     registerer->registerFunction(
         ASYFFI_FN_NAME_AND_ADDR(createRandomPens),
         AsyFfiHelpers::Functions::createFunctionTypeMetadata(
-            AsyFfiHelpers::TypeObjects::Array<AsyFfiHelpers::TypeObjects::Basic<IAsyPen>>::value,
+            AsyFfiHelpers::TypeObjects::Array<AsyFfiHelpers::TypeObjects::Basic<IAsyPen>>(),
             STD_CONTAINER_SIZE_AND_DATA(randomPointArgs)
         )
     );
