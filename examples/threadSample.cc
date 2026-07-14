@@ -1,7 +1,5 @@
 #include <asyffi.h>
 #include "asyffihelper.h"
-#include "asyffihelpers/typesTemplates.h"
-
 #include <random>
 #include <vector>
 #include <thread>
