@@ -1,0 +1,27 @@
+# -*- tab-width: 4; indent-tabs-mode: t; -*-
+
+CXX=@CXX@
+CXXFLAGS=-std=c++20 -Iinclude -Iasyffi_header @CXXFLAGS@
+VPATH=src
+
+SRCFILES = \
+	contextFuncs functions item threads typeObjs \
+	types
+
+default: asyffi_lib_helper.a
+.PHONY: default
+
+asyffi_lib_helper.a: $(addsuffix .o,$(SRCFILES))
+	rm -f $@ && ar rcs $@ $^
+
+%.o: %.cc
+	$(CXX) $(CXXFLAGS) -c -o $@ $<
+
+.PHONY: clean
+clean:
+	rm -rf *.o *.a *.exe
+
+.PHONY: distclean
+distclean: clean
+	rm -rf asyffi_header Makefile \
+		configure config.log config.status configure~ autom4te.cache
