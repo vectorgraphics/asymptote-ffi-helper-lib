@@ -38,5 +38,5 @@ is under Apache license. Therefore, we are able to license this library under Ap
 *** Author & Acknowledgements ***
 
 This library is written by Jamie Selina Lindner <jamievlin@outlook.com>
-Additional credits is given to John C. Bowman and Charles Stats III for helping with
+Additional credits is given to John C. Bowman and Charles Staats III for helping with
 the development of this library.
