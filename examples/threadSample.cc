@@ -1,5 +1,7 @@
 #include <asyffi.h>
 #include "asyffihelper.h"
+#include "asyffihelpers/typesObjs.h"
+
 #include <random>
 #include <vector>
 #include <thread>
@@ -8,7 +10,7 @@
 // on linux, compile with
 // g++ -shared -std=c++20 -fPIC -o libasydll.so asydll.cc
 
-DECLARE_REGISTER_FN(threadSample);
+DECLARE_REGISTER_FN;
 
 namespace
 {
@@ -108,25 +110,33 @@ ASY_FOREIGN_FUNC_SIG(createRandomPoints)
 
 } // namespace
 
-REGISTER_FN_SIG(threadSample)
+REGISTER_FN_SIG
 {
     std::vector const randomPointArgs {
         AsyFfiHelpers::Types::createFnArgMetadata(AsyFfiHelpers::Types::INT_TYPE, "numberOfPoints")
     };
 
+    auto const pairArrayObj =
+        AsyFfiHelpers::TypeObjects::Array::fromBaseType<AsyFfiHelpers::TypeObjects::Primitive>(
+            Asy::BaseTypes::Pair
+        );
+
+    auto const penArrayObj =
+        AsyFfiHelpers::TypeObjects::Array::fromBaseType<AsyFfiHelpers::TypeObjects::Primitive>(
+            Asy::BaseTypes::Pen
+        );
+
     registerer->registerFunction(
         ASYFFI_FN_NAME_AND_ADDR(createRandomPoints),
         AsyFfiHelpers::Functions::createFunctionTypeMetadata(
-            AsyFfiHelpers::Types::createArrayType(&AsyFfiHelpers::Types::PAIR_TYPE),
-            STD_CONTAINER_SIZE_AND_DATA(randomPointArgs)
+            pairArrayObj.toTypeObject(), STD_CONTAINER_SIZE_AND_DATA(randomPointArgs)
         )
     );
 
     registerer->registerFunction(
         ASYFFI_FN_NAME_AND_ADDR(createRandomPens),
         AsyFfiHelpers::Functions::createFunctionTypeMetadata(
-            AsyFfiHelpers::Types::createArrayType(&AsyFfiHelpers::Types::PEN_TYPE),
-            STD_CONTAINER_SIZE_AND_DATA(randomPointArgs)
+            penArrayObj.toTypeObject(), STD_CONTAINER_SIZE_AND_DATA(randomPointArgs)
         )
     );
 }
