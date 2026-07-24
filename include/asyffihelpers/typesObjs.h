@@ -29,6 +29,10 @@ public:
  * Type helpers for Asymptote primitives
  * (i.e. no additional information required apart from base type name), for example,
  * integers, reals or boolean values
+ *
+ * Note that when generating type structs, ensure the {@link Array}'s instance that is
+ * building the struct is alive until the struct is used by Asymptote. The structs generated
+ * contains pointers to internal variables within this class.
  */
 class Primitive : public TypeObject
 {
@@ -86,7 +90,10 @@ private:
 };
 
 /**
- * Helper class for construction of function types
+ * Helper class for construction of function types.
+ * Note that when generating type structs, ensure the {@link Function}'s instance that is
+ * building the struct is alive until the struct is used by Asymptote. The structs generated
+ * contains pointers to internal variables within this class.
  */
 class Function : public TypeObject
 {

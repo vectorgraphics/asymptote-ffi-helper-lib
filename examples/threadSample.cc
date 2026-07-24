@@ -114,7 +114,7 @@ REGISTER_FN_SIG
 {
     namespace TypeObjs = AsyFfiHelpers::TypeObjects;
 
-    auto createRandomPtsFnInfo =
+    auto const createRandomPtsFnInfo =
         TypeObjs::Function::builder<TypeObjs::Array>(
             TypeObjs::Array::fromBaseType<TypeObjs::Primitive>(Asy::BaseTypes::Pair)
         )
@@ -128,7 +128,7 @@ REGISTER_FN_SIG
         ASYFFI_FN_NAME_AND_ADDR(createRandomPoints), createRandomPtsFnInfo
     );
 
-    auto createRandomPenFnInfo =
+    auto const createRandomPenFnInfo =
         TypeObjs::Function::builder<TypeObjs::Array>(
             TypeObjs::Array::fromBaseType<TypeObjs::Primitive>(Asy::BaseTypes::Pen)
         )
