@@ -64,5 +64,13 @@ Asy::TypeInfo Function::toTypeObject() const
         }
     };
 }
+Asy::FunctionTypeMetadata Function::toFunctionTypeMetadata() const
+{
+    return {
+        .returnType = returnTypeStruct,
+        .numArgs = argumentTypeMetadata.size(),
+        .argInfoPtr = argumentTypeMetadata.data()
+    };
+}
 
 } // namespace AsyFfiHelpers::TypeObjects

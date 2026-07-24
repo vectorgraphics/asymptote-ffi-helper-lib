@@ -113,6 +113,9 @@ public:
     [[nodiscard]]
     Asy::TypeInfo toTypeObject() const override;
 
+    [[nodiscard]]
+    Asy::FunctionTypeMetadata toFunctionTypeMetadata() const;
+
 private:
     std::unique_ptr<TypeObject> returnType;
     Asy::TypeInfo returnTypeStruct;
