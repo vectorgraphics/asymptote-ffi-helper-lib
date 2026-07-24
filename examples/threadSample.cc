@@ -112,31 +112,31 @@ ASY_FOREIGN_FUNC_SIG(createRandomPoints)
 
 REGISTER_FN_SIG
 {
-    std::vector const randomPointArgs {
-        AsyFfiHelpers::Types::createFnArgMetadata(AsyFfiHelpers::Types::INT_TYPE, "numberOfPoints")
-    };
+    namespace TypeObjs = AsyFfiHelpers::TypeObjects;
 
-    auto const pairArrayObj =
-        AsyFfiHelpers::TypeObjects::Array::fromBaseType<AsyFfiHelpers::TypeObjects::Primitive>(
-            Asy::BaseTypes::Pair
-        );
-
-    auto const penArrayObj =
-        AsyFfiHelpers::TypeObjects::Array::fromBaseType<AsyFfiHelpers::TypeObjects::Primitive>(
-            Asy::BaseTypes::Pen
-        );
+    auto createRandomPtsFnInfo =
+        TypeObjs::Function::builder<TypeObjs::Array>(
+            TypeObjs::Array::fromBaseType<TypeObjs::Primitive>(Asy::BaseTypes::Pair)
+        )
+            .build(
+                TypeObjs::Function::FunctionArg::fromNewTypeObj<TypeObjs::Primitive>(
+                    "numberOfPoints", Asy::BaseTypes::Integer
+                )
+            );
 
     registerer->registerFunction(
-        ASYFFI_FN_NAME_AND_ADDR(createRandomPoints),
-        AsyFfiHelpers::Functions::createFunctionTypeMetadata(
-            pairArrayObj.toTypeObject(), STD_CONTAINER_SIZE_AND_DATA(randomPointArgs)
-        )
+        ASYFFI_FN_NAME_AND_ADDR(createRandomPoints), createRandomPtsFnInfo
     );
 
-    registerer->registerFunction(
-        ASYFFI_FN_NAME_AND_ADDR(createRandomPens),
-        AsyFfiHelpers::Functions::createFunctionTypeMetadata(
-            penArrayObj.toTypeObject(), STD_CONTAINER_SIZE_AND_DATA(randomPointArgs)
+    auto createRandomPenFnInfo =
+        TypeObjs::Function::builder<TypeObjs::Array>(
+            TypeObjs::Array::fromBaseType<TypeObjs::Primitive>(Asy::BaseTypes::Pen)
         )
-    );
+            .build(
+                TypeObjs::Function::FunctionArg::fromNewTypeObj<TypeObjs::Primitive>(
+                    "numberOfPoints", Asy::BaseTypes::Integer
+                )
+            );
+
+    registerer->registerFunction(ASYFFI_FN_NAME_AND_ADDR(createRandomPens), createRandomPenFnInfo);
 }
