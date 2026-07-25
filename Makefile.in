@@ -2,7 +2,8 @@
 
 CXX=@CXX@
 CXXFLAGS=-std=c++20 -Iinclude -Iasyffi_header -fPIC @CXXFLAGS@
-VPATH=src
+LDFLAGS=@LDFLAGS@
+VPATH=src examples
 
 SRCFILES = \
 	contextFuncs functions item threads typeObjs \
@@ -11,11 +12,23 @@ SRCFILES = \
 default: asyffi_lib_helper.a
 .PHONY: default
 
-asyffi_lib_helper.a: $(addsuffix .o,$(SRCFILES))
+libasyffi_helper.a: $(addsuffix .o,$(SRCFILES))
 	rm -f $@ && ar rcs $@ $^
 
 %.o: %.cc
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
+
+# examples
+
+EXAMPLES = threadSample
+
+lib%.so: %.o libasyffi_helper.a
+	$(CXX) -shared  $< -o $@ $(LDFLAGS) -L. -l asyffi_helper
+
+.PHONY: examples
+examples: $(addsuffix .so,$(addprefix lib,$(EXAMPLES)))
+
+# clean/dist-clean options
 
 .PHONY: clean
 clean:
