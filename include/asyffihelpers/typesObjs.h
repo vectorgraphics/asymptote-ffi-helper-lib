@@ -99,7 +99,7 @@ class Function : public TypeObject
 {
 public:
     /** Helper struct for constructing individual function arguments */
-    struct FunctionArg
+    struct Argument
     {
         /** Pointer to the argument type */
         std::unique_ptr<TypeObject> argType;
@@ -113,7 +113,7 @@ public:
         /** Whether the argument must be explicitly specified */
         bool explicitArgs;
 
-        FunctionArg(
+        Argument(
             std::unique_ptr<TypeObject> argTy, std::string name, bool optional = false,
             bool explicitArgs = false
         );
@@ -127,7 +127,7 @@ public:
          */
         template<typename TArgObj, typename... TArgs>
             requires std::is_base_of_v<TypeObject, TArgObj>
-        static FunctionArg fromNewTypeObj(
+        static Argument fromNewTypeObj(
             std::string const& name, bool const optional, bool const explicitArgs,
             TArgs&&... objArgs
         )
@@ -144,7 +144,7 @@ public:
          */
         template<typename TObj, typename... TArgs>
             requires(std::is_base_of_v<TypeObject, TObj> && std::is_constructible_v<TObj, TArgs...>)
-        static FunctionArg fromNewTypeObj(std::string const& name, TArgs&&... objArgs)
+        static Argument fromNewTypeObj(std::string const& name, TArgs&&... objArgs)
         {
             return fromNewTypeObj<TObj, TArgs...>(
                 name, false, false, std::forward<TArgs>(objArgs)...
@@ -154,7 +154,7 @@ public:
 
     /** Constructs a Function helper type with no arguments */
     Function(std::unique_ptr<TypeObject> returnType);
-    Function(std::unique_ptr<TypeObject> returnType, std::vector<FunctionArg> args);
+    Function(std::unique_ptr<TypeObject> returnType, std::vector<Argument> args);
 
     /** Convenience struct to build a function helper type. Note that this struct is one-time use,
      * which means that after {@link Builder::build} is called, this struct cannot not be used again
@@ -178,13 +178,13 @@ public:
          * Builds a {@link Function} instance. Note that after calling this function,
          * the instance calling build cannot not be used again.
          *
-         * Each argument passed into this function is one instance of {@link FunctionArg}. The
-         * function is constructed with the argument from {@code arguments} in that order.
+         * Each argument passed into this function is one instance of {@link Argument}. The
+         * function is constructed with the argument from {@code arguments @endcode} in that order.
          */
-        template<std::same_as<FunctionArg>... TArgs>
+        template<std::same_as<Argument>... TArgs>
         Function build(TArgs&&... arguments)
         {
-            std::vector<FunctionArg> constructedArgs;
+            std::vector<Argument> constructedArgs;
             (constructedArgs.emplace_back(std::forward<TArgs>(arguments)), ...);
 
             return {std::move(returnTypeObj), std::move(constructedArgs)};
@@ -224,7 +224,7 @@ private:
     std::unique_ptr<TypeObject> returnType;
     Asy::TypeInfo returnTypeStruct;
 
-    std::vector<FunctionArg> functionArgs;
+    std::vector<Argument> functionArgs;
     std::vector<Asy::FnArgMetadata> argumentTypeMetadata;
 };
 

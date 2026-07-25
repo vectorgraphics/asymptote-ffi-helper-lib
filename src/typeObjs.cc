@@ -24,7 +24,7 @@ Asy::TypeInfo Array::toTypeInfo() const
     };
 }
 
-Function::FunctionArg::FunctionArg(
+Function::Argument::Argument(
     std::unique_ptr<TypeObject> argTy, std::string name, bool const optional,
     bool const explicitArgs
 )
@@ -36,7 +36,7 @@ Function::Function(std::unique_ptr<TypeObject> returnType)
     : returnType(std::move(returnType)), returnTypeStruct(returnType->toTypeInfo())
 {
 }
-Function::Function(std::unique_ptr<TypeObject> returnType, std::vector<FunctionArg> args)
+Function::Function(std::unique_ptr<TypeObject> returnType, std::vector<Argument> args)
     : returnType(std::move(returnType)), returnTypeStruct(returnType->toTypeInfo()),
       functionArgs {std::move(args)}
 {
