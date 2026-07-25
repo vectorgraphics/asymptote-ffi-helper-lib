@@ -17,7 +17,7 @@ AC_ARG_WITH(asyffi-header-location, [AS_HELP_STRING()], [
 
 wgetrc_args=
 AC_ARG_WITH(
-    wgetrc_file,
+    wgetrc-file,
     [AS_HELP_STRING(
         wgetrc file to use when downloading header file.
         This option is inert if with-asyffi-header-location is given
@@ -28,10 +28,15 @@ AC_ARG_WITH(
 )
 
 mkdir -p asyffi_header
+rm -rf asyffi_header/asyffi.h
 
 AS_IF([test "x$asyffi_header_file" = "x"],[
     # file not given, download from web
-    wget -l $wgetrc_args $default_asyffi_url -O asyffi_header/asyffi.h
+    AC_MSG_NOTICE([
+        Downloading asyffi.h from $default_asyffi_url.
+        If the download fails try giving wget additional options through --with-wgetrc-file
+    ])
+    wget $wgetrc_args -O asyffi_header/asyffi.h $asyffi_header_url
 ],[
     # file given, copy from web
     AC_MSG_NOTICE([Using asyffi.h from $asyffi_header_file])
