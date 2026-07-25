@@ -37,7 +37,7 @@ ASY_FOREIGN_FUNC_SIG(createRandomPens)
 
                 for (size_t runIndex = idx; runIndex < numberOfPoints; runIndex += threadCount)
                 {
-                    Asy::PenColor col {
+                    Asy::PenColor const col {
                         .red = randDist(randEng),
                         .green = randDist(randEng),
                         .blue = randDist(randEng),
@@ -112,15 +112,15 @@ ASY_FOREIGN_FUNC_SIG(createRandomPoints)
 
 REGISTER_FN_SIG
 {
-    namespace TypeObjs = AsyFfiHelpers::TypeObjects;
-
+    namespace TO = AsyFfiHelpers::TypeObjects;
+    using Asy::BaseTypes;
     auto const createRandomPtsFnInfo =
-        TypeObjs::Function::builder<TypeObjs::Array>(
-            TypeObjs::Array::fromBaseType<TypeObjs::Primitive>(Asy::BaseTypes::Pair)
+        TO::Function::builder<TO::Array>(
+            TO::Array::fromBaseType<TO::Primitive>(BaseTypes::Pair)
         )
             .build(
-                TypeObjs::Function::FunctionArg::fromNewTypeObj<TypeObjs::Primitive>(
-                    "numberOfPoints", Asy::BaseTypes::Integer
+                TO::Function::Argument::fromNewTypeObj<TO::Primitive>(
+                    "numberOfPoints", BaseTypes::Integer
                 )
             );
 
@@ -129,12 +129,12 @@ REGISTER_FN_SIG
     );
 
     auto const createRandomPenFnInfo =
-        TypeObjs::Function::builder<TypeObjs::Array>(
-            TypeObjs::Array::fromBaseType<TypeObjs::Primitive>(Asy::BaseTypes::Pen)
+        TO::Function::builder<TO::Array>(
+            TO::Array::fromBaseType<TO::Primitive>(BaseTypes::Pen)
         )
             .build(
-                TypeObjs::Function::FunctionArg::fromNewTypeObj<TypeObjs::Primitive>(
-                    "numberOfPoints", Asy::BaseTypes::Integer
+                TO::Function::Argument::fromNewTypeObj<TO::Primitive>(
+                    "numberOfPoints", BaseTypes::Integer
                 )
             );
 
