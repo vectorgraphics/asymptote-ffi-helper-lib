@@ -1,4 +1,4 @@
-Helper functions for Asymptote FFI
+# Helper functions for Asymptote FFI
 
 This library provides convenience functions on top of Asymptote's
 foreign function interface. The functions provided here utilize C++ features
@@ -12,30 +12,34 @@ provides:
 
 We are planning on additional features.
 
-*** Building ***
+# Building
 
 Firstly, this library requires a C++ compiler that supports C++20 or beyond.
 As of writing this (July 22, 2026), only MSVC has full C++20 support on Windows.
 On POSIX systems, gcc-16 has almost complete C++20 support. Currently, this g++-16
 is able to compile this library without issues.
 
-The recommended way to build is to use CMake. For this, build asyffi-helper-lib.
+The recommended way to build is to use CMake. For this, build `asyffi_helper`.
 However, we also support Makefiles. To do this, ensure autotools is installed on the system and run
 
+```sh
 autoconf
 ./configure <options>
+```
 
 Therefore, on Linux or mac, we recommend using g++-16 when possible, for example, if one is
 using Makefiles, configure with
 
+```sh
 CXX=g++-16 ./configure <options>
+```
 
-*** License ***
+# License
 
-See LICENSE.txt. Note that while Asymptote is licensed under LGPL/GPL, the asyffi.h file
+See `LICENSE.txt`. Note that while Asymptote is licensed under LGPL/GPL, the asyffi.h file
 is under Apache license. Therefore, we are able to license this library under Apache
 
-*** Author & Acknowledgements ***
+# Author & Acknowledgements
 
 This library is written by Jamie Selina Lindner <jamievlin@outlook.com>
 Additional credits is given to John C. Bowman and Charles Staats III for helping with
