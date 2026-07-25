@@ -32,7 +32,7 @@ examples: $(addsuffix .so,$(addprefix lib,$(EXAMPLES)))
 
 .PHONY: clean
 clean:
-	rm -rf *.o *.a *.exe
+	rm -rf *.so *.o *.a *.exe
 
 .PHONY: distclean
 distclean: clean
