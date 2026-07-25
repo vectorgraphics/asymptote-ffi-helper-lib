@@ -9,7 +9,10 @@ SRCFILES = \
 	contextFuncs functions item threads typeObjs \
 	types
 
-default: asyffi_lib_helper.a
+default: libasyffi_helper.a
+.PHONY: default
+
+all: libasyffi_helper.a examples
 .PHONY: default
 
 libasyffi_helper.a: $(addsuffix .o,$(SRCFILES))
