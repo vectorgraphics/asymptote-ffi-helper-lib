@@ -1,6 +1,6 @@
 #pragma once
 
-#include <asyffihelpers/types.h>
+#include <asyffi.h>
 #include <memory>
 #include <utility>
 #include <vector>
