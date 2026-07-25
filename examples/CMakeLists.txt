@@ -6,7 +6,7 @@ function(add_example filename)
             MODULE EXCLUDE_FROM_ALL
             ${filename}.cc
     )
-    target_link_libraries(${filename} PUBLIC asyffi-helper-lib)
+    target_link_libraries(${filename} PUBLIC asyffi_helper)
 endfunction()
 
 add_example(threadSample)

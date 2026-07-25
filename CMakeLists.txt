@@ -37,7 +37,7 @@ list(
 
 
 add_library(
-        asyffi-helper-lib STATIC
+        asyffi_helper STATIC
         ${ASYFFI_HELPER_SRC_FILES}
 )
 
@@ -51,7 +51,7 @@ FetchContent_MakeAvailable(asyffi-dll-dl)
 
 # and include them alongside include/ as our include path
 target_include_directories(
-        asyffi-helper-lib
+        asyffi_helper
         PUBLIC ${asyffi-dll-dl_SOURCE_DIR} include
 )
 
