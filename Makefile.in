@@ -41,3 +41,8 @@ clean:
 distclean: clean
 	rm -rf asyffi_header Makefile \
 		configure config.log config.status configure~ autom4te.cache
+
+Makefile: Makefile.in config.status
+	./config.status
+
+config.status:
