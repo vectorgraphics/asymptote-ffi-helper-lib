@@ -166,6 +166,8 @@ public:
     struct Builder
     {
         friend Function;
+        /** Use {@link Function::builder} instead to construct an instance of Builder */
+        Builder() = delete;
 
     protected:
         Builder(std::unique_ptr<TReturnTypeObj>&& returnTypeObj)
