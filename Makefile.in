@@ -1,13 +1,20 @@
 # -*- tab-width: 4; indent-tabs-mode: t; -*-
 
 CXX=@CXX@
-CXXFLAGS=-std=c++20 -Iinclude -Iasyffi_header -fPIC @CXXFLAGS@
+CXXFLAGS=-std=c++20 -MMD -Iinclude -Iasyffi_header -fPIC @CXXFLAGS@
 LDFLAGS=@LDFLAGS@
 VPATH=src examples
+SUFFIXES += .d
 
 SRCFILES = \
 	contextFuncs functions item threads typeObjs \
 	types pen
+
+# examples
+
+EXAMPLES = threadSample
+
+DEPS = $(addsuffix .d,$(SRCFILES) $(EXAMPLES))
 
 default: libasyffi_helper.a
 .PHONY: default
@@ -23,7 +30,6 @@ libasyffi_helper.a: $(addsuffix .o,$(SRCFILES))
 
 # examples
 
-EXAMPLES = threadSample
 
 lib%.so: %.o libasyffi_helper.a
 	$(CXX) -shared  $< -o $@ $(LDFLAGS) -L. -l asyffi_helper
@@ -35,7 +41,7 @@ examples: $(addsuffix .so,$(addprefix lib,$(EXAMPLES)))
 
 .PHONY: clean
 clean:
-	rm -rf *.so *.o *.a *.exe
+	rm -rf *.so *.o *.a *.exe *.d
 
 .PHONY: distclean
 distclean: clean
@@ -46,3 +52,7 @@ Makefile: Makefile.in config.status
 	./config.status
 
 config.status:
+
+ifeq (,$(filter clean distclean,$(MAKECMDGOALS)))
+-include $(DEPS)
+endif
