@@ -18,6 +18,8 @@ ASY_FOREIGN_FUNC_SIG(createRandomPens)
 {
     ASYFFI_CONTEXT_HELPER
 
+    namespace AP = AsyFfiHelpers::Pen;
+
     auto numberOfPoints = AsyFfiHelpers::Item::getItem<int64_t>(args->getNumberedArg(0));
     IAsyArray* newArray = context->createNewArray(numberOfPoints);
 
@@ -29,7 +31,7 @@ ASY_FOREIGN_FUNC_SIG(createRandomPens)
     for (size_t i = 0; i < threadCount; ++i)
     {
         threads.emplace_back(ctxHelper.createNewThread(
-            [context, newArray, threadCount,
+            [context, ctxHelper, newArray, threadCount,
              numberOfPoints](unsigned int const seed, size_t const idx)
             {
                 std::mt19937_64 randEng(seed);
@@ -37,19 +39,15 @@ ASY_FOREIGN_FUNC_SIG(createRandomPens)
 
                 for (size_t runIndex = idx; runIndex < numberOfPoints; runIndex += threadCount)
                 {
-                    Asy::PenColor const col {
-                        .red = randDist(randEng),
-                        .green = randDist(randEng),
-                        .blue = randDist(randEng),
-                        .grey = 0
-                    };
 
-                    IAsyPen* newPen = context->createNewPen(
-                        nullptr, ASY_PEN_DEFAULT_WIDTH, nullptr, nullptr, 0.0, 0.0,
-                        Asy::PenColorSpace::Rgb, col, nullptr, Asy::PenFillRule::Default, nullptr,
-                        Asy::PenBaseLine::Default, Asy::PenLineCap::Default,
-                        Asy::PenLineJoin::Default, 0.0, Asy::PenOverwrites::Default, nullptr
+                    IAsyPen* newPen = ctxHelper.createNewPen(
+                        AP::PenCreationInfo(
+                            AP::fromRgb(
+                                randDist(randEng), randDist(randEng), randDist(randEng)
+                            )
+                        )
                     );
+
                     IAsyItem* newItem = context->createBlankItem();
                     AsyFfiHelpers::Item::setItemPtr(newItem, newPen);
                     newArray->setItem(runIndex, newItem);
@@ -115,9 +113,7 @@ REGISTER_FN_SIG
     namespace TO = AsyFfiHelpers::TypeObjects;
     using Asy::BaseTypes;
     auto const createRandomPtsFnInfo =
-        TO::Function::builder<TO::Array>(
-            TO::Array::fromBaseType<TO::Primitive>(BaseTypes::Pair)
-        )
+        TO::Function::builder<TO::Array>(TO::Array::fromBaseType<TO::Primitive>(BaseTypes::Pair))
             .build(
                 TO::Function::Argument::fromNewTypeObj<TO::Primitive>(
                     "numberOfPoints", BaseTypes::Integer
@@ -129,9 +125,7 @@ REGISTER_FN_SIG
     );
 
     auto const createRandomPenFnInfo =
-        TO::Function::builder<TO::Array>(
-            TO::Array::fromBaseType<TO::Primitive>(BaseTypes::Pen)
-        )
+        TO::Function::builder<TO::Array>(TO::Array::fromBaseType<TO::Primitive>(BaseTypes::Pen))
             .build(
                 TO::Function::Argument::fromNewTypeObj<TO::Primitive>(
                     "numberOfPoints", BaseTypes::Integer
