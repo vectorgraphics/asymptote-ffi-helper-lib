@@ -3,6 +3,7 @@
 #include <asyffi.h>
 #include "asyffihelpers/threads.h"
 #include <thread>
+#include "asyffihelpers/pen.h"
 
 namespace AsyFfiHelpers::Item
 {
@@ -24,6 +25,10 @@ public:
             }
         );
     }
+
+    /** Creates a new pen using {@link Pen::PenCreationInfo} struct */
+    [[nodiscard]]
+    IAsyPen* createNewPen(Pen::PenCreationInfo const& penCreationInfo) const;
 
 private:
     IAsyContext* context;
