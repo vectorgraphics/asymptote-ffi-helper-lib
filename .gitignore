@@ -517,3 +517,6 @@ autom4te.cache
 
 # asyffi header file
 asyffi_header
+
+# ignore dir
+idir
