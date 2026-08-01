@@ -25,19 +25,19 @@ Asy::TypeInfo Array::toTypeInfo() const
 }
 
 Function::Argument::Argument(
-    std::unique_ptr<TypeObject> argTy, std::string name, bool const optional,
+    std::unique_ptr<TypeObject>&& argTy, std::string name, bool const optional,
     bool const explicitArgs
 )
     : argType(std::move(argTy)), name(std::move(name)), optional(optional),
       explicitArgs(explicitArgs)
 {
 }
-Function::Function(std::unique_ptr<TypeObject> returnType)
-    : returnType(std::move(returnType)), returnTypeStruct(returnType->toTypeInfo())
+Function::Function(std::unique_ptr<TypeObject>&& returnType)
+    : returnType(std::move(returnType)), returnTypeStruct(this->returnType->toTypeInfo())
 {
 }
-Function::Function(std::unique_ptr<TypeObject> returnType, std::vector<Argument> args)
-    : returnType(std::move(returnType)), returnTypeStruct(returnType->toTypeInfo()),
+Function::Function(std::unique_ptr<TypeObject>&& returnType, std::vector<Argument> args)
+    : returnType(std::move(returnType)), returnTypeStruct(this->returnType->toTypeInfo()),
       functionArgs {std::move(args)}
 {
     argumentTypeMetadata.reserve(functionArgs.size());

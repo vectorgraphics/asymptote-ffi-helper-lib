@@ -114,7 +114,7 @@ public:
         bool explicitArgs;
 
         Argument(
-            std::unique_ptr<TypeObject> argTy, std::string name, bool optional = false,
+            std::unique_ptr<TypeObject>&& argTy, std::string name, bool optional = false,
             bool explicitArgs = false
         );
 
@@ -153,8 +153,8 @@ public:
     };
 
     /** Constructs a Function helper type with no arguments */
-    Function(std::unique_ptr<TypeObject> returnType);
-    Function(std::unique_ptr<TypeObject> returnType, std::vector<Argument> args);
+    Function(std::unique_ptr<TypeObject>&& returnType);
+    Function(std::unique_ptr<TypeObject>&& returnType, std::vector<Argument> args);
 
     /** Convenience struct to build a function helper type. Note that this struct is one-time use,
      * which means that after {@link Builder::build} is called, this struct cannot not be used again
