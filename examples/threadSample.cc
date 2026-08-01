@@ -23,7 +23,7 @@ ASY_FOREIGN_FUNC_SIG(createRandomPens)
     auto numberOfPoints = AsyFfiHelpers::Item::getItem<int64_t>(args->getNumberedArg(0));
     IAsyArray* newArray = context->createNewArray(numberOfPoints);
 
-    size_t const threadCount = std::thread::hardware_concurrency();
+    auto const threadCount = std::max<size_t>(std::thread::hardware_concurrency(), 1);
     std::vector<std::thread> threads;
     threads.reserve(threadCount);
 
@@ -42,9 +42,7 @@ ASY_FOREIGN_FUNC_SIG(createRandomPens)
 
                     IAsyPen* newPen = ctxHelper.createNewPen(
                         AP::PenCreationInfo(
-                            AP::fromRgb(
-                                randDist(randEng), randDist(randEng), randDist(randEng)
-                            )
+                            AP::fromRgb(randDist(randEng), randDist(randEng), randDist(randEng))
                         )
                     );
 
@@ -72,7 +70,7 @@ ASY_FOREIGN_FUNC_SIG(createRandomPoints)
     auto numberOfPoints = AsyFfiHelpers::Item::getItem<int64_t>(args->getNumberedArg(0));
     IAsyArray* newArray = context->createNewArray(numberOfPoints);
 
-    size_t const threadCount = std::thread::hardware_concurrency();
+    auto const threadCount = std::max<size_t>(std::thread::hardware_concurrency(), 1);
     std::vector<std::thread> threads;
     threads.reserve(threadCount);
 
@@ -111,13 +109,11 @@ ASY_FOREIGN_FUNC_SIG(createRandomPoints)
 REGISTER_FN_SIG
 {
     namespace TO = AsyFfiHelpers::TypeObjects;
-    using Asy::BaseTypes;
+    using BT = Asy::BaseTypes;
     auto const createRandomPtsFnInfo =
-        TO::Function::builder<TO::Array>(TO::Array::fromBaseType<TO::Primitive>(BaseTypes::Pair))
+        TO::Function::builder<TO::Array>(TO::Array::fromBaseType<TO::Primitive>(BT::Pair))
             .build(
-                TO::Function::Argument::fromNewTypeObj<TO::Primitive>(
-                    "numberOfPoints", BaseTypes::Integer
-                )
+                TO::Function::Argument::fromNewTypeObj<TO::Primitive>("numberOfPoints", BT::Integer)
             );
 
     registerer->registerFunction(
@@ -125,11 +121,9 @@ REGISTER_FN_SIG
     );
 
     auto const createRandomPenFnInfo =
-        TO::Function::builder<TO::Array>(TO::Array::fromBaseType<TO::Primitive>(BaseTypes::Pen))
+        TO::Function::builder<TO::Array>(TO::Array::fromBaseType<TO::Primitive>(BT::Pen))
             .build(
-                TO::Function::Argument::fromNewTypeObj<TO::Primitive>(
-                    "numberOfPoints", BaseTypes::Integer
-                )
+                TO::Function::Argument::fromNewTypeObj<TO::Primitive>("numberOfPoints", BT::Integer)
             );
 
     registerer->registerFunction(ASYFFI_FN_NAME_AND_ADDR(createRandomPens), createRandomPenFnInfo);
