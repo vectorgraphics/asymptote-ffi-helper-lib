@@ -6,6 +6,8 @@ LDFLAGS=@LDFLAGS@
 VPATH=src examples
 SUFFIXES += .d
 
+DOXYGEN=@DOXYGEN@
+
 SRCFILES = \
 	contextFuncs functions item threads typeObjs \
 	types pen
@@ -19,7 +21,7 @@ DEPS = $(addsuffix .d,$(SRCFILES) $(EXAMPLES))
 default: libasyffi_helper.a
 .PHONY: default
 
-all: libasyffi_helper.a examples
+all: libasyffi_helper.a examples $(DOCS)
 .PHONY: default
 
 libasyffi_helper.a: $(addsuffix .o,$(SRCFILES))
@@ -41,7 +43,7 @@ examples: $(addsuffix .so,$(addprefix lib,$(EXAMPLES)))
 
 .PHONY: clean
 clean:
-	rm -rf *.so *.o *.a *.exe *.d
+	rm -rf *.so *.o *.a *.exe *.d docs
 
 .PHONY: distclean
 distclean: clean
@@ -50,6 +52,22 @@ distclean: clean
 
 Makefile: Makefile.in config.status
 	./config.status
+
+ifneq ($(DOXYGEN),)
+DOCS += docs/html/index.html
+endif
+
+docs: $(DOCS)
+ifeq ($(DOXYGEN),)
+	$(error doxygen not present)
+endif
+
+docs/html/index.html: Doxyfile $(wildcard include/**/*.h)
+ifneq ($(DOXYGEN),)
+	$(DOXYGEN) Doxyfile
+else
+	$(error doxygen not present)
+endif
 
 config.status:
 

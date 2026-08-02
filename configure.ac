@@ -43,5 +43,9 @@ AS_IF([test "x$asyffi_header_file" = "x"],[
     cp $asyffi_header_file asyffi_header/asyffi.h
 ])
 
+# doxygen
+AC_CHECK_TOOL(DOXYGEN,doxygen,[])
+AS_IF([test "x$DOXYGEN" = "x"], [AC_MSG_NOTICE([Doxygen not found. Building of documentation will not be available.])])
+
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT
