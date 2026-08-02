@@ -520,3 +520,6 @@ asyffi_header
 
 # ignore dir
 idir
+
+# docs directory
+docs
