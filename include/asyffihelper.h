@@ -6,3 +6,5 @@
 #include <asyffihelpers/item.h>
 #include <asyffihelpers/threads.h>
 #include <asyffihelpers/functions.h>
+#include <asyffihelpers/pen.h>
+#include <asyffihelpers/typesObjs.h>
