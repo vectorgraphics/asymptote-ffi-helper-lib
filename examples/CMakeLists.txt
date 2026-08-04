@@ -10,3 +10,4 @@ function(add_example filename)
 endfunction()
 
 add_example(threadSample)
+add_example(structSample)
