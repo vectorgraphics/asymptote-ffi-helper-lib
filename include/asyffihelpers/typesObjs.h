@@ -230,4 +230,15 @@ private:
     std::vector<Asy::FnArgMetadata> argumentTypeMetadata;
 };
 
+class Record : public TypeObject
+{
+public:
+    Record(IAsyRecord* record);
+    [[nodiscard]]
+    Asy::TypeInfo toTypeInfo() const override;
+
+private:
+    IAsyRecord* recordObj;
+};
+
 } // namespace AsyFfiHelpers::TypeObjects

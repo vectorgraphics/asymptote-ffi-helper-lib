@@ -72,5 +72,12 @@ Asy::FunctionTypeMetadata Function::toFunctionTypeMetadata() const
         .argInfoPtr = argumentTypeMetadata.data()
     };
 }
+Record::Record(IAsyRecord* record) : recordObj(record)
+{
+}
+Asy::TypeInfo Record::toTypeInfo() const
+{
+    return {.baseType = Asy::BaseTypes::Record, .extraData = {.recordPtr = recordObj}};
+}
 
 } // namespace AsyFfiHelpers::TypeObjects
