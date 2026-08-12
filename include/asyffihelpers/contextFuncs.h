@@ -30,6 +30,9 @@ public:
     [[nodiscard]]
     IAsyPen* createNewPen(Pen::PenCreationInfo const& penCreationInfo) const;
 
+    /** Creates a new C++ string instance from asymptote string */
+    std::string createStringFromAsyString(void* asyString) const;
+
 private:
     IAsyContext* context;
 };

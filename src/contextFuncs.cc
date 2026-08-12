@@ -21,4 +21,11 @@ IAsyPen* AsyContextHelper::createNewPen(Pen::PenCreationInfo const& penCreationI
         penCreationInfo.miterLimit, penCreationInfo.overwriteType, penCreationInfo.transform
     );
 }
+std::string AsyContextHelper::createStringFromAsyString(void* asyString) const
+{
+    size_t const len = context->getStringLength(asyString);
+    std::vector<char> buffer(len + 1);
+    context->copyString(asyString, buffer.data(), len + 1);
+    return {buffer.data()};
+}
 } // namespace AsyFfiHelpers::Item
