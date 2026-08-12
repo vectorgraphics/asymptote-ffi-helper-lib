@@ -10,7 +10,7 @@ DOXYGEN=@DOXYGEN@
 
 SRCFILES = \
 	contextFuncs functions item threads typeObjs \
-	types pen
+	types pen structs
 
 # examples
 

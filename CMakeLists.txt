@@ -22,7 +22,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 set(
         ASYFFI_HELPER_SRC_FILES
         types threads item contextFuncs functions
-        typeObjs pen
+        typeObjs pen structs
 )
 
 list(
