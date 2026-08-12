@@ -14,7 +14,7 @@ SRCFILES = \
 
 # examples
 
-EXAMPLES = threadSample
+EXAMPLES = threadSample structSample
 
 DEPS = $(addsuffix .d,$(SRCFILES) $(EXAMPLES))
 

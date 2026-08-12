@@ -1,6 +1,7 @@
 #include <asyffi.h>
 #include "asyffihelper.h"
 #include "asyffihelpers/pluginRegisterDecl.h"
+#include "asyffihelpers/structs.h"
 
 namespace
 {
@@ -10,42 +11,26 @@ IAsyRecord* structRecord;
 
 ASY_FOREIGN_FUNC_SIG(createRandomData)
 {
-    auto* penv = structRecord->getProtoEnvironment();
-    IAsyVarFrame* newVarFrame = context->createNewVarFrame(1);
+    AsyFfiHelpers::Structs::ManagedRecord structRec(structRecord);
 
-    auto* xTy = penv->getTypeFromVariable("x");
-    IAsyVarEntry* xVarRec = penv->getVarRecord("x", xTy);
-    auto const* xAccess =
-        static_cast<IAsyLocalAccess*>(xVarRec->getAccess()->tryCastTo(Asy::AccessTypes::Local));
-    newVarFrame->extend(xAccess->getOffset() + 1);
-    AsyFfiHelpers::Item::setItem<int64_t>(newVarFrame->getItem(xAccess->getOffset()), 100);
+    IAsyVarFrame* newVf = structRec.createNewInstance(context);
 
-    auto* yTy = penv->getTypeFromVariable("y");
-    IAsyVarEntry* yVarRec = penv->getVarRecord("y", yTy);
-    auto const* yAccess =
-        static_cast<IAsyLocalAccess*>(yVarRec->getAccess()->tryCastTo(Asy::AccessTypes::Local));
-    newVarFrame->extend(yAccess->getOffset() + 1);
-    AsyFfiHelpers::Item::setItem<double>(newVarFrame->getItem(yAccess->getOffset()), 3.14159);
+    namespace AI = AsyFfiHelpers::Item;
 
-    auto* zTy = penv->getTypeFromVariable("z");
-    IAsyVarEntry* zVarRec = penv->getVarRecord("z", zTy);
-    auto const* zAccess =
-        static_cast<IAsyLocalAccess*>(zVarRec->getAccess()->tryCastTo(Asy::AccessTypes::Local));
+    AI::setItem<int64_t>(structRec.getField(newVf, "x"), 100U);
+    AI::setItem<>(structRec.getField(newVf, "y"), 3.14159);
+    AI::setItemPtr(
+        structRec.getField(newVf, "z"), context->createNewAsyString("hello world!")
+    );
 
-    newVarFrame->extend(zAccess->getOffset() + 1);
-    void* newStr = context->createNewAsyString("hello world!");
-    newVarFrame->getItem(zAccess->getOffset())->setRawPointer(newStr);
-
-    returnValue->setRawPointer(newVarFrame);
+    AI::setItemPtr(returnValue, newVf);
 }
 
 } // namespace
 
 REGISTER_FN_SIG
 {
-    structAsyFile = registerer->getGlobalEnvironment()->loadFileModule(
-        "structSample_recfile", "structSample_recfile.asy"
-    );
+    structAsyFile = registerer->getGlobalEnvironment()->loadExistingModule("structSample_recfile");
 
     structRecord = structAsyFile->getProtoEnvironment()->getTypeAsRecord("StructSampleReturnData");
 
