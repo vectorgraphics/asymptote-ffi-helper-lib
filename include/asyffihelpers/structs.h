@@ -12,7 +12,7 @@ public:
     ManagedRecord(IAsyRecord* recordPtr);
 
     /** Creates a new instance with specified context */
-    IAsyVarFrame* createNewInstance(IAsyContext* context) const;
+    IAsyVarFrame* createNewInstance(IAsyContext* context, IAsyVarFrame* parentFrame=nullptr) const;
 
     /** Returns a pointer to the object under field variableName.
      * @remark This function is only to be used when there is exactly one field with that name.

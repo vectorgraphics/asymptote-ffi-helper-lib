@@ -9,14 +9,11 @@ ManagedRecord::ManagedRecord(IAsyRecord* recordPtr)
       postDefProtoEnv(record->getPostDefinitionProtoEnvironment())
 {
 }
-IAsyVarFrame* ManagedRecord::createNewInstance(IAsyContext* context) const
+IAsyVarFrame* ManagedRecord::createNewInstance(IAsyContext* context, IAsyVarFrame* parentFrame) const
 {
-    if (initLambda->getClosureRequirement() == Asy::ClosureRequirement::Required)
-    {
-        throw std::runtime_error("TODO: Handle closures");
-    }
-
-    return context->createNewVarFrame(initLambda->getFrameSize());
+    IAsyVarFrame* ret = context->createNewVarFrame(initLambda->getFrameSize());
+    ret->getItem(initLambda->getParentIndex())->setRawPointer(parentFrame);
+    return ret;
 }
 IAsyItem* ManagedRecord::getField(IAsyVarFrame* recordInstance, char const* variableName) const
 {
