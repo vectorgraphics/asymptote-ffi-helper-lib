@@ -31,7 +31,7 @@ public:
     IAsyPen* createNewPen(Pen::PenCreationInfo const& penCreationInfo) const;
 
     /** Creates a new C++ string instance from asymptote string */
-    std::string createStringFromAsyString(void* asyString) const;
+    std::string createStringFromAsyString(THAsyString asyString) const;
 
 private:
     IAsyContext* context;
