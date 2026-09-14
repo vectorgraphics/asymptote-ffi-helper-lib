@@ -50,4 +50,24 @@ public:
         item->setRawPointer(static_cast<void*>(value));
     }
 };
+
+template<typename T>
+class ItemWrapper
+{
+public:
+    ItemWrapper(IAsyItem* baseItem): backingItem(baseItem) {}
+
+    operator T()
+    {
+        return ItemFunctions<T>::getItem(backingItem);
+    }
+
+    ItemWrapper& operator=(T const& other)
+    {
+        ItemFunctions<T>::setItem(backingItem, other);
+        return *this;
+    }
+private:
+    IAsyItem* backingItem;
+};
 } // namespace AsyFfiHelper::Item
