@@ -11,3 +11,5 @@ endfunction()
 
 add_example(threadSample)
 add_example(structSample)
+add_example(pictureSample)
+add_example(clipSample)
