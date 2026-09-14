@@ -1,6 +1,7 @@
 #include <asyffi.h>
 #include "asyffihelper.h"
 #include "asyffihelpers/pluginRegisterDecl.h"
+#include "asyffihelpers/args.h"
 #include <random>
 
 namespace
@@ -8,8 +9,9 @@ namespace
 ASY_FOREIGN_FUNC_SIG(createPicture)
 {
     ASYFFI_CONTEXT_HELPER;
+    auto [path1] = UNPACK_ARGS(IAsyPath*);
+
     auto* picture = context->createPicture(false);
-    auto* path1 = static_cast<IAsyPath*>(args->getNumberedArg(0)->asRawPointer());
 
     AsyFfiHelpers::Pen::PenCreationInfo pci(
         {.red = 0.0, .green = 0.0, .blue = 0.0, .grey = 0.0}, 0.8
