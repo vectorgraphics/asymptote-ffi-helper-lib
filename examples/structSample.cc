@@ -18,12 +18,10 @@ ASY_FOREIGN_FUNC_SIG(createRandomData)
     namespace AI = AsyFfiHelpers::Item;
 
     AI::setItem<int64_t>(structRec.getField(newVf, "x"), 100U);
-    AI::setItem<>(structRec.getField(newVf, "y"), 3.14159);
-    AI::setItemPtr(
-        structRec.getField(newVf, "z"), context->createNewAsyString("hello world!")
-    );
+    AI::setItem(structRec.getField(newVf, "y"), 3.14159);
+    AI::setItem(structRec.getField(newVf, "z"), context->createNewAsyString("hello world!"));
 
-    AI::setItemPtr(returnValue, newVf);
+    AI::setItem(returnValue, newVf);
 }
 
 } // namespace

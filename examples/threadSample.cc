@@ -88,7 +88,7 @@ ASY_FOREIGN_FUNC_SIG(createRandomPoints)
                 {
                     IAsyTuple* newPair = context->createPair(randDist(randEng), randDist(randEng));
                     IAsyItem* newItem = context->createBlankItem();
-                    AsyFfiHelpers::Item::setItemPtr(newItem, newPair);
+                    AsyFfiHelpers::Item::setItem(newItem, newPair);
                     newArray->setItem(runIndex, newItem);
                 }
             },

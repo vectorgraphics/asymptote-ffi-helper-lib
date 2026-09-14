@@ -1,10 +1,12 @@
 #pragma once
 #include <asyffi.h>
+#include <type_traits>
 
 namespace AsyFfiHelpers::Item
 {
 
 template<typename T>
+    requires std::is_fundamental_v<T>
 void setItem(IAsyItem* item, T const& value) = delete;
 
 template<>
@@ -22,8 +24,23 @@ void setItemPtr(IAsyItem* item, T* ptr)
     item->setRawPointer(static_cast<void*>(ptr));
 }
 
+template<typename TPTr>
+    requires std::is_pointer_v<TPTr>
+void setItem(IAsyItem* item, TPTr ptr)
+{
+    item->setRawPointer(static_cast<void*>(ptr));
+}
+
 template<typename T>
+    requires std::is_fundamental_v<T>
 T getItem(IAsyItem const* item) = delete;
+
+template<typename TPtr>
+    requires std::is_pointer_v<TPtr>
+TPtr getItem(IAsyItem const* item)
+{
+    return static_cast<TPtr>(item->asRawPointer());
+}
 
 template<>
 int64_t getItem<int64_t>(IAsyItem const* item);
