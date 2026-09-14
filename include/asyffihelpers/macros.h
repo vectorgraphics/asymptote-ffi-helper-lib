@@ -1,7 +1,7 @@
 #pragma once
 
 /** Add this macro to declare AsyContextHelper with name ctxHelper in a plugin function*/
-#define ASYFFI_CONTEXT_HELPER AsyFfiHelpers::Item::AsyContextHelper ctxHelper(context);
+#define ASYFFI_CONTEXT_HELPER AsyFfiHelpers::Context::AsyContextHelper ctxHelper(context);
 
 /**
  * Shorthand for container.size(), container.data()

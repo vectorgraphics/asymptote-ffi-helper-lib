@@ -1,7 +1,7 @@
 #include "asyffihelpers/contextFuncs.h"
 #include "asyffihelpers/common.h"
 
-namespace AsyFfiHelpers::Item
+namespace AsyFfiHelpers::Context
 {
 
 AsyContextHelper::AsyContextHelper(IAsyContext* ctx) : context(ctx)

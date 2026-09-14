@@ -5,7 +5,7 @@
 #include <thread>
 #include "asyffihelpers/pen.h"
 
-namespace AsyFfiHelpers::Item
+namespace AsyFfiHelpers::Context
 {
 
 class AsyContextHelper
