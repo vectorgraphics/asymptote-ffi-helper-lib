@@ -9,8 +9,8 @@ SUFFIXES += .d
 DOXYGEN=@DOXYGEN@
 
 SRCFILES = \
-	contextFuncs functions item threads typeObjs \
-	types pen structs
+	contextFuncs functions threads typeObjs \
+	types pen structs itemFnStructs
 
 # examples
 
