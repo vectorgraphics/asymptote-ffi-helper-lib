@@ -1,9 +1,11 @@
 #pragma once
 
+#include <thread>
+
 #include <asyffi.h>
 #include "asyffihelpers/threads.h"
-#include <thread>
 #include "asyffihelpers/pen.h"
+#include "asyffihelpers/array.h"
 
 namespace AsyFfiHelpers::Context
 {
@@ -33,8 +35,44 @@ public:
     /** Creates a new C++ string instance from asymptote string */
     std::string createStringFromAsyString(THAsyString asyString) const;
 
+    /**
+     * Creates an array wrapped in {@link Array::ArrayWrapper}
+     * with specified type and an initial size
+     */
+    template<typename T>
+    Array::ArrayWrapper<T> createArray(size_t const& initialSize)
+    {
+        return Array::ArrayWrapper<T>(context->createNewArray(initialSize));
+    }
+
+    /**
+     * Creates an array wrapped in {@link Array::ArrayWrapper}
+     * with specified type, a size and a pointer to array of the items to set.
+     */
+    template<typename T>
+    Array::ArrayWrapper<T> createArray(size_t const& size, T const* ptrToTObjs)
+    {
+        Array::ArrayWrapper<T> newArray(context->createNewArray(size));
+
+        for (auto i = 0; i < size; ++i)
+        {
+            newArray[i] = *ptrToTObjs;
+        }
+        return newArray;
+    }
+
+    /**
+     * Creates an array wrapped in {@link Array::ArrayWrapper} with specified type
+     * from an initializer list.
+     */
+    template<typename T>
+    Array::ArrayWrapper<T> createArray(std::initializer_list<T> items)
+    {
+        return createArray(items.size(), items.data());
+    }
+
 private:
     IAsyContext* context;
 };
 
-} // namespace AsyFfiHelpers::Item
+} // namespace AsyFfiHelpers::Context

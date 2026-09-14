@@ -42,8 +42,7 @@ ASY_FOREIGN_FUNC_SIG(createPicture)
         context->createAsyPath(solvedKnots.size(), false, STD_CONTAINER_SIZE_AND_DATA(solvedKnots));
     auto* drawElement = context->createDrawElementFromPath(createPath, pen1, nullptr);
 
-    auto* pathSrc = context->createNewArray(1);
-    pathSrc->getItem(0)->setRawPointer(path1);
+    auto pathSrc = ctxHelper.createArray<>({path1});
 
     picture->appendDrawElement(drawElement);
 
