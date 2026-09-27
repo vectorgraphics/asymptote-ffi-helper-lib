@@ -19,4 +19,11 @@ T getItem(IAsyItem const* item)
     return ItemFunctions<T>::getItem(item);
 }
 
+/** Gets Asymptote items for basic types (int64_t, double, bool) or pointers */
+template<typename T>
+T getItem(IAsyItem* item)
+{
+    return ItemFunctions<T>::getItem(item);
+}
+
 } // namespace AsyFfiHelpers::Item
