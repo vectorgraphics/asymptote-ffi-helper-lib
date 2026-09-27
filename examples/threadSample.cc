@@ -47,7 +47,7 @@ ASY_FOREIGN_FUNC_SIG(createRandomPens)
                     );
 
                     IAsyItem* newItem = context->createBlankItem();
-                    AsyFfiHelpers::Item::setItemPtr(newItem, newPen);
+                    AsyFfiHelpers::Item::setItem(newItem, newPen);
                     newArray->setItem(runIndex, newItem);
                 }
             },
