@@ -2,11 +2,11 @@
 
 namespace AsyFfiHelpers::Item
 {
-int64_t ItemFunctions<long long>::getItem(IAsyItem* item)
+int64_t ItemFunctions<int64_t>::getItem(IAsyItem* item)
 {
     return item->asInt64();
 }
-void ItemFunctions<long long>::setItem(IAsyItem* item, int64_t const value)
+void ItemFunctions<int64_t>::setItem(IAsyItem* item, int64_t const value)
 {
     item->setInt64Value(value);
 }
