@@ -31,7 +31,7 @@ public:
     [[nodiscard]]
     bool isEmpty() const
     {
-        return backingArray->getSize() > 0;
+        return backingArray->getSize() == 0;
     }
 
     /** Returns the underlying pointer to the Asymptote array object. */
