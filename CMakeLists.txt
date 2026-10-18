@@ -43,6 +43,8 @@ add_library(
         ${ASYFFI_HELPER_SRC_FILES}
 )
 
+set_target_properties(asyffi_helper PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
+
 # and fetch the asyffi.h file
 FetchContent_Declare(
         asyffi-header-dl
