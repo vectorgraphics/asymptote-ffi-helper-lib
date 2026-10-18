@@ -68,7 +68,7 @@ public:
     template<typename T>
     Array::ArrayWrapper<T> createArray(std::initializer_list<T> items)
     {
-        return createArray(items.size(), items.begin());
+        return createArray(items.size(), items.data());
     }
 
 private:
