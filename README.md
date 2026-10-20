@@ -68,11 +68,12 @@ REGISTER_FN_SIG
         }
     );
 
-    // void(int) -- use [context] capture to access the host (e.g. for
-    // reportWarning, creating Asy objects, etc.).
+    // void(int) -- a leading AsyFfi::Context parameter gives the lambda the
+    // Asymptote host (reportWarning, creating Asy objects, ...). It is not an
+    // Asymptote argument, so the inferred signature is still void(int).
     registerFunction(
-        registerer, "logIt", [context](int64_t x) -> void {
-            context->reportWarning("logIt called");
+        registerer, "logIt", [](Context ctx, int64_t x) -> void {
+            ctx->reportWarning("logIt called");
         }
     );
 }
@@ -91,36 +92,29 @@ m.logIt(5);
 ### Calling Asymptote from C++ (`asy::call`)
 
 The FFI is bidirectional. C++ can call *back* into Asymptote through
-`AsyFfi::call` (see `asyffihelpers/call.h`). This requires the traditional
-`ASY_FOREIGN_FUNC_SIG` form (because the call needs the `IAsyStackContext*`),
-but the argument/return conversion is still fully typed:
+`AsyFfi::call` (see `asyffihelpers/call.h`). A type-inferred lambda that takes
+the injected `AsyFfi::Context` can do this directly -- no hand-built metadata:
 
 ```cpp
 #include <asyffihelper.h>
 using namespace AsyFfi;
 DECLARE_REGISTER_FN;
 
-ASY_FOREIGN_FUNC_SIG(sqrtOf)
-{
-    double const x = fromItem<double>(context, args->getNumberedArg(0));
-    double const r = call<double>(context, stackContext, nullptr, "sqrt", x);
-    toItem<double>(context, returnValue, r);
-}
-
 REGISTER_FN_SIG
 {
-    Asy::TypeInfo const realTy = TypeInfoOf<double>::value;
-    Asy::FnArgMetadata const a[] = {{realTy, "x", false, false}};
-    Asy::FunctionTypeMetadata const meta{realTy, 1, a};
-    registerer->registerFunction("sqrtOf", &sqrtOf, meta);
+    // real sqrtOf(real) == sqrt(x): calls Asymptote's builtin sqrt from C++.
+    registerFunction(
+        registerer, "sqrtOf", [](Context ctx, double x) -> double {
+            return AsyFfi::call<double>(ctx, nullptr, "sqrt", x);
+        }
+    );
 }
 ```
 
 In Asymptote: `m.sqrtOf(25)` returns `5`.
 
-The `module` parameter (the third argument to `call`) is `nullptr` for
-top-level built-ins, or the id of an imported module (e.g. `"gsl"`) to
-resolve the function from that module.
+The `module` argument to `call` is `nullptr` for top-level built-ins, or the id
+of an imported module (e.g. `"gsl"`) to resolve the function from that module.
 
 ### Escape hatch: explicit metadata
 
