@@ -1,4 +1,4 @@
-struct StructSampleReturnData
+struct StructReturnData
 {
     int x;
     real y;

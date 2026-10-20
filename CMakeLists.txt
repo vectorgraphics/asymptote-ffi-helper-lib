@@ -1,11 +1,7 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.31.0)
+cmake_minimum_required(VERSION 3.31.0)
 include(FetchContent)
 
 project(asyffi-helper-lib CXX)
-
-# whether to enable compilation of examples. In production environment, this
-# should be turned off to speed cmake loading (unless if examples are needed)
-option(ASYFFI_HELPER_LOAD_EXAMPLES "Whether to enable loading of example targets" FALSE)
 
 option(ASYFFI_BUILD_DOCS "Whether to build documentation" TRUE)
 
@@ -18,6 +14,9 @@ set(
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
+
+# Single-function helper for building loadable FFI plugins: asyffi_add_plugin().
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/asyffi_plugin.cmake)
 
 set(
         ASYFFI_HELPER_SRC_FILES
@@ -59,9 +58,8 @@ target_include_directories(
         PUBLIC ${asyffi-header-dl_SOURCE_DIR} include
 )
 
-if (ASYFFI_HELPER_LOAD_EXAMPLES)
-    add_subdirectory(examples)
-endif()
+enable_testing()
+add_subdirectory(tests)
 
 # docgen
 

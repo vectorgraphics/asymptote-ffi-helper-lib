@@ -12,6 +12,135 @@ provides:
 
 We are planning on additional features.
 
+# Minimal plugin (type-inferred registration)
+
+The simplest possible plugin is three lines of C++:
+
+```cpp
+#include <asyffihelper.h>
+using namespace AsyFfi;
+DECLARE_REGISTER_FN;
+
+REGISTER_FN_SIG
+{
+    registerFunction(registerer, "doubleIt", [](int64_t x) { return 2 * x; });
+}
+```
+
+Compile as a shared library (`-shared -fPIC`), then in Asymptote:
+
+```asy
+import "/path/to/libmyplugin" as m;
+label("answer: " + string(m.doubleIt(21)));   // prints 42
+```
+
+The return and argument types are inferred from the lambda's C++ signature -- no
+hand-written metadata, no manual unpacking. See `asyffihelpers/register.h` for
+the full API and supported types.
+
+### A slightly larger example
+
+A plugin can register multiple functions of different types in a single
+`REGISTER_FN_SIG` block. This example covers the most common patterns:
+
+```cpp
+#include <asyffihelper.h>
+#include <numeric>
+using namespace AsyFfi;
+DECLARE_REGISTER_FN;
+
+REGISTER_FN_SIG
+{
+    // int(int) -> int
+    registerFunction(registerer, "doubleIt", [](int64_t x) -> int64_t { return 2 * x; });
+
+    // pair(pair, pair) -> pair
+    registerFunction(
+        registerer, "midpoint", [](AsyFfi::pair a, AsyFfi::pair b) -> AsyFfi::pair {
+            return AsyFfi::pair{(a.x + b.x) / 2.0, (a.y + b.y) / 2.0};
+        }
+    );
+
+    // real(real[]) -> real
+    registerFunction(
+        registerer, "addAll", [](std::vector<double> xs) -> double {
+            return std::accumulate(xs.begin(), xs.end(), 0.0);
+        }
+    );
+
+    // void(int) -- use [context] capture to access the host (e.g. for
+    // reportWarning, creating Asy objects, etc.).
+    registerFunction(
+        registerer, "logIt", [context](int64_t x) -> void {
+            context->reportWarning("logIt called");
+        }
+    );
+}
+```
+
+In Asymptote:
+
+```asy
+import "/path/to/libmyplugin" as m;
+label(string(m.doubleIt(21)));              // 42
+label(string(m.midpoint((0,0), (4,6)).x));   // 2
+label(string(m.addAll(new real[]{1,2,3})));   // 6
+m.logIt(5);
+```
+
+### Calling Asymptote from C++ (`asy::call`)
+
+The FFI is bidirectional. C++ can call *back* into Asymptote through
+`AsyFfi::call` (see `asyffihelpers/call.h`). This requires the traditional
+`ASY_FOREIGN_FUNC_SIG` form (because the call needs the `IAsyStackContext*`),
+but the argument/return conversion is still fully typed:
+
+```cpp
+#include <asyffihelper.h>
+using namespace AsyFfi;
+DECLARE_REGISTER_FN;
+
+ASY_FOREIGN_FUNC_SIG(sqrtOf)
+{
+    double const x = fromItem<double>(context, args->getNumberedArg(0));
+    double const r = call<double>(context, stackContext, nullptr, "sqrt", x);
+    toItem<double>(context, returnValue, r);
+}
+
+REGISTER_FN_SIG
+{
+    Asy::TypeInfo const realTy = TypeInfoOf<double>::value;
+    Asy::FnArgMetadata const a[] = {{realTy, "x", false, false}};
+    Asy::FunctionTypeMetadata const meta{realTy, 1, a};
+    registerer->registerFunction("sqrtOf", &sqrtOf, meta);
+}
+```
+
+In Asymptote: `m.sqrtOf(25)` returns `5`.
+
+The `module` parameter (the third argument to `call`) is `nullptr` for
+top-level built-ins, or the id of an imported module (e.g. `"gsl"`) to
+resolve the function from that module.
+
+### Escape hatch: explicit metadata
+
+The ergonomic `registerFunction` template above handles the common
+`Ret(Args...)` cases. For optional/named arguments, overloads, or any case
+the template cannot express, use the explicit-metadata path directly:
+
+```cpp
+Asy::FunctionTypeMetadata const meta{
+    .returnType = Asy::TypeInfo{Asy::BaseTypes::Real, {}},
+    .numArgs = 1,
+    .argInfoPtr = args  // C array of Asy::FnArgMetadata
+};
+registerer->registerFunction(name, &fn, meta);
+```
+
+The same `AsyFfi::toItem` / `AsyFfi::fromItem` helpers work with this path.
+See `asyffihelpers/register.h` (the `registerFunction` escape-hatch overload)
+and `asyffihelpers/typesObjs.h` for the type-builder API.
+
 # Building
 
 Firstly, this library requires a C++ compiler that supports C++20 or beyond.
@@ -62,6 +191,80 @@ using Makefiles, configure with
 ```sh
 CXX=g++-16 ./configure <options>
 ```
+
+## Build a plugin (`asyffi_add_plugin`)
+
+Once the helper is built, use the one-function CMake helper `asyffi_add_plugin`
+to build a loadable plugin. It takes care of the fiddly parts: a `SHARED`
+target with `-fPIC` and C++20, the `asyffi.h` + `asyffihelpers/` include dirs
+(reusing the header location the helper build already resolved -- you do **not**
+re-specify `ASYFFI_HEADER_DOWNLOAD_URL`), and the correct output name
+(`lib<name>.so` on Linux, `<name>.dll` on Windows).
+
+```cmake
+# In a consumer CMake project that has the asyffi_helper target available
+# (e.g. via add_subdirectory of this library):
+add_subdirectory(asyffi-helper-lib helper)   # provides target: asyffi_helper
+
+include(asyffi-helper-lib/cmake/asyffi_plugin.cmake)
+
+#   asyffi_add_plugin(<target> <src>... [LIBNAME <name>] [ASY_PATH_DIR <dir>])
+asyffi_add_plugin(myplug myplug.cc)
+```
+
+A fresh, minimal consumer that just calls `asyffi_add_plugin(hello hello.cc)`
+produces `libhello.so` (Linux) / `hello.dll` (Windows) that `asy` can load.
+
+Details:
+- `LIBNAME <name>` sets the output file name; a leading `lib` is stripped, so
+  `LIBNAME hello` and `LIBNAME libhello` both give `libhello.so`.
+- Symbol export is handled by `asyffi.h`: the generated
+  `registerAsymptotePlugin` entry point carries `ASY_FFI_EXPORT`
+  (`[[gnu::visibility("default")]]` on ELF / `__declspec(dllexport)` on
+  Windows), so the plugin loads with no extra visibility flags.
+- `ASY_PATH_DIR <dir>` adds a post-build step that copies the built
+  `.so`/`.dll` into `<dir>` (an Asymptote search-path directory), so the
+  author can then `import <name>;` directly instead of importing an absolute
+  path.
+- A ready-to-build single-file example lives in
+  [`templates/single_fn_plugin.cc`](templates/single_fn_plugin.cc); the
+  `template_plugin_roundtrip` ctest builds it through `asyffi_add_plugin` and
+  round-trips it end to end.
+
+On Windows the same CMake produces a `.dll`; the naming and export logic are
+platform-correct. (If no Windows CI runner is available, this is documented
+here rather than exercised by the Linux test suite.)
+
+## Running the round-trip test
+
+This repository includes an automated round-trip test that verifies a trivial FFI
+plugin (`libhello.so`) can be loaded by the real `asy` binary and that its return
+value is correct.
+
+Prerequisites:
+- The Asymptote core binary at `/home/ai/asymptote/asy` (built from the `spike-ffi` branch).
+- CMake  3.31 and CTest.
+
+Commands:
+
+```sh
+cd /home/ai/asymptote-ffi-helper-lib
+cmake -S . -B build -DCMAKE_CXX_STANDARD=20 \
+      -DASYFFI_HEADER_DOWNLOAD_URL=/home/ai/asymptote/asyffi.h \
+      -DASYFFI_BUILD_DOCS=FALSE
+cmake --build build -j
+ctest --test-dir build -R hello_roundtrip --output-on-failure
+```
+
+Expected output on success:
+
+```
+1/1 Test #1: hello_roundtrip ..................   Passed
+100% tests passed out of 1
+```
+
+The test is named `hello_roundtrip` in ctest. If the `asy` binary is missing,
+the test fails loudly with a clear error message.
 
 # License
 

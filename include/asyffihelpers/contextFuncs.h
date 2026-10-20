@@ -71,7 +71,12 @@ public:
         return createArray(items.size(), items.begin());
     }
 
-private:
+public:
+    /**
+     * The raw Asymptote host context. Public so {@link AsyFfi::Context} can
+     * forward to it (via {@code ctx->}) and callers can reach any
+     * {@link IAsyContext} method directly.
+     */
     IAsyContext* context;
 };
 
