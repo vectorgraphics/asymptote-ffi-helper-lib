@@ -150,20 +150,30 @@ is able to compile this library without issues.
 
 ## Using CMake (the recommended way)
 
-The recommended way to build is to use CMake. For this, build `asyffi_helper`.
+The recommended way to build is to use CMake. Configure and build the
+`asyffi_helper` static library:
 
-This library requires `asyffi.h`, the Asymptote foreign function interface header file. It is not included
-in this repo, though it may be obtained from this [repo](https://github.com/vectorgraphics/asymptote).
+```sh
+cmake -S . -B build
+cmake --build build -j
+```
 
-For CMake builds, specify `ASYFFI_HEADER_DOWNLOAD_URL` cache variable with either the path to `asyffi.h` on your
-system (if it is on your system, for example if you are an Asymptote developer or are building it manually), or a
-URL to `asyffi.h`.
+`asyffi_helper` requires `asyffi.h`, the Asymptote foreign function interface
+header, which is not included in this repo (see the
+[Asymptote repo](https://github.com/vectorgraphics/asymptote)). CMake locates it
+through the `ASYFFI_HEADER_DOWNLOAD_URL` cache variable. If it is not given,
+CMake downloads it from a default URL, which may be outdated; to use your own
+copy, add it to the configure command above, either as a path to a local
+`asyffi.h` (if you are an Asymptote developer or have already fetched it) or as
+a URL:
 
-For example,
-`ASYFFI_HEADER_DOWNLOAD_URL=/home/.../asymptote/asyffi.h` or
-`ASYFFI_HEADER_DOWNLOAD_URL=https://raw.githubusercontent.com/.../asyffi.h`.
+```sh
+-DASYFFI_HEADER_DOWNLOAD_URL=/home/.../asymptote/asyffi.h
+-DASYFFI_HEADER_DOWNLOAD_URL=https://raw.githubusercontent.com/.../asyffi.h
+```
 
-If this variable is not given, CMake downloads it from a default URL. Be warned that this URL may be outdated.
+Add `-DASYFFI_BUILD_DOCS=FALSE` to the configure command to skip generating the
+Doxygen documentation.
 
 ## Using Makefiles & autoconf
 
@@ -243,16 +253,11 @@ value is correct.
 
 Prerequisites:
 - The Asymptote core binary at `/home/ai/asymptote/asy` (built from the `spike-ffi` branch).
-- CMake  3.31 and CTest.
+- CMake 3.31 and CTest.
 
-Commands:
+Build the library first (see "Using CMake" above), then run the test:
 
 ```sh
-cd /home/ai/asymptote-ffi-helper-lib
-cmake -S . -B build -DCMAKE_CXX_STANDARD=20 \
-      -DASYFFI_HEADER_DOWNLOAD_URL=/home/ai/asymptote/asyffi.h \
-      -DASYFFI_BUILD_DOCS=FALSE
-cmake --build build -j
 ctest --test-dir build -R hello_roundtrip --output-on-failure
 ```
 
