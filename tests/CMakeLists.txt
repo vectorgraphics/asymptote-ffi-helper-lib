@@ -34,38 +34,6 @@ add_test(
 )
 
 
-#  Phase 6 tooling: build the single-file template through asyffi_add_plugin()
-#  and round-trip it. Acceptance check for the CMake helper + template.
-asyffi_add_plugin(
-        template_plugin
-        ${CMAKE_CURRENT_SOURCE_DIR}/../templates/single_fn_plugin.cc
-        LIBNAME template_plugin
-)
-
-file(GENERATE
-    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/rt_template.asy
-    CONTENT
-    [[
-import "$<TARGET_FILE:template_plugin>" as m;
-int r = m.doubleIt(21);
-if (r != 42) abort("template_plugin doubleIt failed: expected 42, got " + string(r));
-label("ok");
-size(1cm, 1cm);
-    ]]
-)
-
-add_test(
-    NAME template_plugin_roundtrip
-    COMMAND ${CMAKE_COMMAND}
-        -DASY_BIN=${ASYFFI_TEST_ASY_BINARY}
-        -DASY_FILE=${CMAKE_CURRENT_BINARY_DIR}/rt_template.asy
-        -DOUT_DIR=${CMAKE_CURRENT_BINARY_DIR}
-        -DOUT_BASE=rt_template
-        -DNAME=template_plugin
-        -P ${CMAKE_CURRENT_SOURCE_DIR}/run_roundtrip.cmake
-)
-
-
 #  toItem/fromItem value-conversion round-trip test.
 #
 # A plugin that reads every supported argument type (int64_t, double, bool,

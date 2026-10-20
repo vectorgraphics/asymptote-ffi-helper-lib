@@ -230,10 +230,6 @@ Details:
   `.so`/`.dll` into `<dir>` (an Asymptote search-path directory), so the
   author can then `import <name>;` directly instead of importing an absolute
   path.
-- A ready-to-build single-file example lives in
-  [`templates/single_fn_plugin.cc`](templates/single_fn_plugin.cc); the
-  `template_plugin_roundtrip` ctest builds it through `asyffi_add_plugin` and
-  round-trips it end to end.
 
 On Windows the same CMake produces a `.dll`; the naming and export logic are
 platform-correct. (If no Windows CI runner is available, this is documented
