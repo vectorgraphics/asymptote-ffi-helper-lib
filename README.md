@@ -229,8 +229,8 @@ Details:
   Windows), so the plugin loads with no extra visibility flags.
 - `ASY_PATH_DIR <dir>` adds a post-build step that copies the built
   `.so`/`.dll` into `<dir>` (an Asymptote search-path directory), so the
-  author can then `import <name>;` directly instead of importing an absolute
-  path.
+  author can then `import lib<name>;` directly instead of importing an
+  absolute path.
 
 On Windows the same CMake produces a `.dll`; the naming and export logic are
 platform-correct. (If no Windows CI runner is available, this is documented
