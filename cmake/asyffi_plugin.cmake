@@ -10,7 +10,7 @@
 #   - the include dirs for asyffi.h and the asyffihelpers/ headers, reusing
 #     whatever location the asyffi_helper target already resolved (so you do
 #     NOT need to re-specify ASYFFI_HEADER_DOWNLOAD_URL);
-#   - the correct output name (lib<name>.so on Linux, <name>.dll on Windows);
+#   - the correct output name (lib<name>.so on Linux, lib<name>.dll on Windows);
 #   - an optional copy step that drops the built library into an Asymptote
 #     search-path directory so the plugin can be `import <name>`'d directly.
 #
@@ -22,7 +22,7 @@
 #
 # Notes:
 #   * A leading "lib" in LIBNAME is stripped, so `LIBNAME libhello` and
-#     `LIBNAME hello` both produce libhello.so (Linux) / hello.dll (Windows).
+#     `LIBNAME hello` both produce libhello.so (Linux) / libhello.dll (Windows).
 #   * Symbol export is handled by asyffi.h itself: the generated
 #     `registerAsymptotePlugin` entry point is annotated with ASY_FFI_EXPORT
 #     ([[gnu::visibility("default")]] on ELF, __declspec(dllexport) on
@@ -71,8 +71,9 @@ function(asyffi_add_plugin target)
     endif()
 
     # --- Target -------------------------------------------------------------
-    # Default PREFIX is "lib" on ELF and "" on Windows, so OUTPUT_NAME of
-    # "hello" gives libhello.so / hello.dll automatically.
+    # PREFIX is forced to "lib" on all platforms so the built file is
+    # lib<name>.so (Linux) / lib<name>.dll (Windows) -- same base name on both,
+    # giving one extension-less import name that is portable across platforms.
     add_library(${target} SHARED ${AP_SRCS})
 
     set_target_properties(${target} PROPERTIES
@@ -80,6 +81,7 @@ function(asyffi_add_plugin target)
         CXX_STANDARD 20
         CXX_STANDARD_REQUIRED ON
         OUTPUT_NAME ${_asyffi_plugin_name}
+        PREFIX "lib"
     )
 
     # --- Includes & helper symbols -----------------------------------------

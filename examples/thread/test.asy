@@ -1,4 +1,4 @@
-import "libthread.so" as m;
+import "libthread" as m;
 size(4cm);
 pair[] pts = m.createRandomPoints(200);
 pen[] pens = m.createRandomPens(50);

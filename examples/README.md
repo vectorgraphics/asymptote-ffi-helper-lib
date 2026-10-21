@@ -50,7 +50,7 @@ already does in the folder).
 and run `asy -V test` there. Or call the function from any `.asy` file:
 
 ```asy
-import "libminimal.so" as m;
-int x = m.doubleIt(21);     // 42
+import libminimal;
+int x = libminimal.doubleIt(21);     // 42
 ```
 

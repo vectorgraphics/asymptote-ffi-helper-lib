@@ -1,5 +1,5 @@
-import "libclip.so" as m;
+import libclip;
 size(4cm);
-frame f = m.clip(scale(40)*unitcircle);
+frame f = libclip.clip(scale(40)*unitcircle);
 add(f);
 
