@@ -149,7 +149,7 @@ The recommended way to build is to use CMake. Configure and build the
 
 ```sh
 cmake -S . -B build
-cmake --build build -j
+cmake --build build
 ```
 
 `asyffi_helper` requires `asyffi.h`, the Asymptote foreign function interface
