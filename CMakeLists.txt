@@ -7,7 +7,7 @@ option(ASYFFI_BUILD_DOCS "Whether to build documentation" TRUE)
 
 set(
         ASYFFI_HEADER_DOWNLOAD_URL
-        "https://raw.githubusercontent.com/vectorgraphics/asymptote/52de09fa50a5f0c35a6d5f2ed50413f80b8ef730/asyffi.h"
+        "https://vectorgraphics.github.io/asymptote/asyffi.h"
         CACHE STRING
         "URL (or local file path) for downloading asymptote ffi header"
 )

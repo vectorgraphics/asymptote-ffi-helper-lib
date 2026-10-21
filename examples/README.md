@@ -25,9 +25,9 @@ cmake --build build
 This writes the plugin (`lib<name>.so`, or `lib<name>.dll` on Windows) into
 the example folder itself, next to `test.asy`.
 
-`-DASYFFI_HEADER_DOWNLOAD_URL` is only needed until `asyffi.h` is published to
-a stable URL; once that happens you can drop it and just run
-`cmake -S . -B build`.
+`-DASYFFI_HEADER_DOWNLOAD_URL` is optional; the default downloads
+`asyffi.h` from the Asymptote repository's GitHub Pages. Override it to use a
+local copy instead.
 
 ## Run
 

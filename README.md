@@ -155,15 +155,13 @@ cmake --build build -j
 `asyffi_helper` requires `asyffi.h`, the Asymptote foreign function interface
 header, which is not included in this repo (see the
 [Asymptote repo](https://github.com/vectorgraphics/asymptote)). CMake locates it
-through the `ASYFFI_HEADER_DOWNLOAD_URL` cache variable. If it is not given,
-CMake downloads it from a default URL, which may be outdated; to use your own
-copy, add it to the configure command above, either as a path to a local
-`asyffi.h` (if you are an Asymptote developer or have already fetched it) or as
-a URL:
+through the `ASYFFI_HEADER_DOWNLOAD_URL` cache variable. The default is
+`https://vectorgraphics.github.io/asymptote/asyffi.h`, which is the latest
+header served from the Asymptote repository's GitHub Pages. To override with a
+local copy, add it to the configure command above:
 
 ```sh
 -DASYFFI_HEADER_DOWNLOAD_URL=/home/.../asymptote/asyffi.h
--DASYFFI_HEADER_DOWNLOAD_URL=https://raw.githubusercontent.com/.../asyffi.h
 ```
 
 Add `-DASYFFI_BUILD_DOCS=FALSE` to the configure command to skip generating the
@@ -185,9 +183,10 @@ Like in CMake, `asyffi.h` must be provided to the build system. There are two po
 2. You may choose to specify a URL to `asyffi.h`. wget needs to be installed in your system for the download
    to happen. In this case, configure with argument `--with-asyffi-header-url` with the URL of the header file,
    for example,
-   `./configure --with-asyffi-header-url=https://raw.githubusercontent.com/.../asyffi.h`
+   `./configure --with-asyffi-header-url=https://vectorgraphics.github.io/asymptote/asyffi.h`
 
-If neither option is given, autoconf downloads it from a default URL. Again, be warned that this URL may be outdated.
+If neither option is given, autoconf downloads it from the default URL
+(`https://vectorgraphics.github.io/asymptote/asyffi.h`).
 
 Therefore, on Linux or mac, we recommend using g++-16 when possible, for example, if one is
 using Makefiles, configure with

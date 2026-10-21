@@ -3,7 +3,7 @@ AC_INIT(asyffi-helper-lib, 0.0.0-SNAPSHOT)
 AC_LANG(C++)
 AC_PROG_CXX
 
-default_asyffi_url=https://raw.githubusercontent.com/vectorgraphics/asymptote/52de09fa50a5f0c35a6d5f2ed50413f80b8ef730/asyffi.h
+default_asyffi_url=https://vectorgraphics.github.io/asymptote/asyffi.h
 
 AC_ARG_WITH(
     asyffi-header-url, [AS_HELP_STRING(URL to asyffi.h)],[
