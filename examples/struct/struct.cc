@@ -3,7 +3,7 @@
 // Registers:
 //   StructReturnData createRandomData()        -- returns a new struct instance
 //   int              doubleX(StructReturnData r)  -- reads a struct argument
-//   StructReturnData copyRecord(StructReturnData r)  -- independent copy, x += 1
+//   StructReturnData copyStruct(StructReturnData r)  -- independent copy, x += 1
 //
 // Struct types are *user-defined* Asymptote structs (defined in
 // struct_recfile.asy, loaded at registration), so their return/argument types
@@ -14,8 +14,8 @@
 // The struct type is looked up once with AsyFfi::Struct. Fields are written and
 // read with ManagedRecord::set/get, and struct values cross the boundary as an
 // AsyFfi::record (a wrapper around the instance's IAsyVarFrame): an argument is
-// read with AsyFfi::fromItem<AsyFfi::record> (doubleX, copyRecord) and a return
-// value is written with AsyFfi::toItem<AsyFfi::record> (copyRecord).
+// read with AsyFfi::fromItem<AsyFfi::record> (doubleX, copyStruct) and a return
+// value is written with AsyFfi::toItem<AsyFfi::record> (copyStruct).
 
 #include <asyffihelper.h>
 
@@ -59,7 +59,7 @@ ASY_FOREIGN_FUNC_SIG(doubleX)
 // same proxy (AsyFfi::toItem<AsyFfi::record>). This exercises the record proxy in
 // both directions and shows the returned struct is a separate, writable value:
 // the original argument is left untouched by the modification.
-ASY_FOREIGN_FUNC_SIG(copyRecord)
+ASY_FOREIGN_FUNC_SIG(copyStruct)
 {
     AsyFfi::record const in = AsyFfi::fromItem<AsyFfi::record>(context, args->getNumberedArg(0));
     AsyFfiHelpers::Structs::ManagedRecord mr(structRecord);
@@ -96,11 +96,11 @@ REGISTER_FN_SIG
     };
     AsyFfi::registerFunction(registerer, "doubleX", &doubleX, meta);
 
-    // copyRecord(StructReturnData r) -> StructReturnData (struct arg + struct return).
+    // copyStruct(StructReturnData r) -> StructReturnData (struct arg + struct return).
     Asy::FunctionTypeMetadata const copyMeta{
         .returnType = data.typeInfo(),
         .numArgs = 1,
         .argInfoPtr = &arg
     };
-    AsyFfi::registerFunction(registerer, "copyRecord", &copyRecord, copyMeta);
+    AsyFfi::registerFunction(registerer, "copyStruct", &copyStruct, copyMeta);
 }

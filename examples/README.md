@@ -8,7 +8,7 @@ ready-to-run `test.asy`.
 | example   | what it shows |
 |-----------|---------------|
 | `minimal` | "hello world": one function (`doubleIt`) registered with the type-inferred `AsyFfi::registerFunction` (no hand-written metadata, no manual unpacking). |
-| `picture` | draw a path into a picture with a red pen, using the injected `AsyFfi::Context`. |
+| `frame`   | draw a path into a frame with a red pen, using the injected `AsyFfi::Context`. |
 | `clip`    | clip a random cloud to a path. |
 | `thread`  | create random pens/points in parallel threads. |
 | `struct`  | return a user-defined Asymptote struct (escape-hatch overload for a runtime record return type). |

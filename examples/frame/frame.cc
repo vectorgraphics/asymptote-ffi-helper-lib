@@ -1,6 +1,6 @@
-// picture.cc -- draw a path into a picture with a red pen.
+// frame.cc -- draw a path into a frame with a red pen.
 //
-// Registers:  frame createPicture(path)
+// Registers:  frame createFrame(path)
 //
 // (A C++-level "picture", i.e. IAsyPicture*, is an Asymptote *frame*; see the
 // BaseTypes::Picture remark in asyffi.h.)
@@ -20,7 +20,7 @@ DECLARE_REGISTER_FN;
 REGISTER_FN_SIG
 {
     registerFunction(
-        registerer, "createPicture",
+        registerer, "createFrame",
         [](Context ctx, path p) -> picture {
             auto* pic = ctx->createPicture(false);
             auto* pen = ctx.createNewPen({{.red = 1.0, .green = 0.0, .blue = 0.0, .grey = 0.0}});

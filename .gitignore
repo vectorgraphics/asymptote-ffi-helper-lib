@@ -523,3 +523,10 @@ idir
 
 # docs directory
 docs
+
+# Project build outputs: CMake build dirs and asy render artifacts
+build/
+*.eps
+
+# Emacs lock files
+.#*
