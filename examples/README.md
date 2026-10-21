@@ -18,7 +18,7 @@ ready-to-run `test.asy`.
 From inside each example folder:
 
 ```sh
-cmake -S . -B build -DASYFFI_HEADER_DOWNLOAD_URL=/path/to/asymptote/asyffi.h
+cmake -S . -B build
 cmake --build build
 ```
 
