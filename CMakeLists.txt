@@ -61,6 +61,13 @@ target_include_directories(
 enable_testing()
 add_subdirectory(tests)
 
+# Build the example plugins only when this is the top-level project. When a
+# standalone example does add_subdirectory(root), it would otherwise recurse
+# back into the same example target.
+if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+    add_subdirectory(examples)
+endif()
+
 # docgen
 
 if (ASYFFI_BUILD_DOCS)

@@ -8,16 +8,17 @@ project(clip-ffi-plugin CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# The asyffi_helper repository lives two directories up (examples/clip -> root).
-set(ASYFFI_HELPER_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../..)
-
-# Pull in the helper library: defines the asyffi_helper target and loads
+# When building standalone (not as part of the root project), pull in the
+# helper library: defines the asyffi_helper target and loads
 # cmake/asyffi_plugin.cmake (giving us asyffi_add_plugin).
-add_subdirectory(
-    ${ASYFFI_HELPER_ROOT}
-    ${CMAKE_BINARY_DIR}/helperlib
-    EXCLUDE_FROM_ALL
-)
+if(NOT TARGET asyffi_helper)
+    set(ASYFFI_HELPER_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../..)
+    add_subdirectory(
+        ${ASYFFI_HELPER_ROOT}
+        ${CMAKE_BINARY_DIR}/helperlib
+        EXCLUDE_FROM_ALL
+    )
+endif()
 
 # Build the plugin and force the output into THIS directory (".") so the .so
 # sits right next to test.asy.
