@@ -3,7 +3,7 @@
 CXX=@CXX@
 CXXFLAGS=-std=c++20 -MMD -Iinclude -Iasyffi_header -fPIC @CXXFLAGS@
 LDFLAGS=@LDFLAGS@
-VPATH=src examples
+VPATH=src examples/minimal examples/picture examples/clip examples/thread examples/struct
 SUFFIXES += .d
 
 DOXYGEN=@DOXYGEN@
@@ -14,7 +14,7 @@ SRCFILES = \
 
 # examples
 
-EXAMPLES = threadSample structSample pictureSample clipSample
+EXAMPLES = minimal picture clip thread struct
 
 DEPS = $(addsuffix .d,$(SRCFILES) $(EXAMPLES))
 

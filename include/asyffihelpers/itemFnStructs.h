@@ -163,4 +163,4 @@ public:
 private:
     IAsyItem* backingItem;
 };
-} // namespace AsyFfiHelper::Item
+} // namespace AsyFfiHelpers::Item
