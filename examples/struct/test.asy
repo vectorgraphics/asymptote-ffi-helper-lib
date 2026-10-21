@@ -9,5 +9,11 @@ StructReturnData d = libstruct.createRandomData();
 if (d.x != 100 || d.z != "hello world!" || abs(d.y - 3.14159) > 1e-6)
     abort("struct example: unexpected field values: x=" + string(d.x)
           + " y=" + string(d.y) + " z=" + d.z);
-label("x=" + string(d.x) + "  y=" + string(d.y) + "  z=" + d.z);
+
+// Struct as a *function argument*: doubleX reads d.x through the AsyFfi::record
+// proxy and returns 2*x.
+int doubled = libstruct.doubleX(d);
+if (doubled != 200)
+    abort("struct example: doubleX failed, expected 200, got " + string(doubled));
+label("x=" + string(d.x) + "  y=" + string(d.y) + "  z=" + d.z + "  doubleX=" + string(doubled));
 

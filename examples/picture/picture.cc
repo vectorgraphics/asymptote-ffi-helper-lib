@@ -1,4 +1,3 @@
-
 // picture.cc -- draw a path into a picture with a red pen.
 //
 // Registers:  frame createPicture(path)

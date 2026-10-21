@@ -1,4 +1,3 @@
-
 // clip.cc -- clip a random "cloud" path to the input path.
 //
 // Registers:  frame clip(path)

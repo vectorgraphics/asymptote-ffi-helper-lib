@@ -1,4 +1,3 @@
-
 // thread.cc -- build an array of random pens / points in parallel.
 //
 // Registers:

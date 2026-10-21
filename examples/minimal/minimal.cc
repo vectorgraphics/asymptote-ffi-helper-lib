@@ -1,4 +1,3 @@
-
 // minimal.cc -- the minimal Asymptote FFI plugin ("hello world").
 //
 // Registers a single function:  int doubleIt(int)

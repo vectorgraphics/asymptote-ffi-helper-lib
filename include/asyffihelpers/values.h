@@ -156,6 +156,33 @@ struct pen
     constexpr explicit pen(IAsyPen* p): ptr(p) {}
 };
 
+/**
+ * Proxy for a user-defined Asymptote struct (record) *instance*.
+ *
+ * Wraps a non-owning {@link IAsyVarFrame*} -- the frame that holds one instance
+ * of a struct. Unlike the other proxies, {@code record} has no
+ * {@link TypeInfoOf} specialization: the Asymptote type of a struct is runtime
+ * data (a specific {@link IAsyRecord*}) and cannot be a {@code static constexpr}
+ * {@link Asy::TypeInfo}. Struct-typed signatures therefore still use the
+ * escape-hatch {@link AsyFfi::registerFunction} overload; this proxy provides
+ * only the {@link ItemFunctions} value conversion so {@code AsyFfi::toItem}/
+ * {@code AsyFfi::fromItem} work on struct instances.
+ *
+ * Inside a struct-returning or struct-argument function, obtain a {@code record}
+ * from an {@link IAsyItem} and reach the frame via {@code ptr}:
+ * @code
+ * AsyFfi::record r = AsyFfi::fromItem<AsyFfi::record>(ctx, item);
+ * mr.set(ctx, r.ptr, "x", 10);   // ManagedRecord::set on the frame
+ * @endcode
+ */
+struct record
+{
+    IAsyVarFrame* ptr{};
+
+    constexpr record() = default;
+    constexpr explicit record(IAsyVarFrame* p): ptr(p) {}
+};
+
 // ============================================================================
 // TypeInfoOf specializations (Phase 1)
 // ============================================================================
@@ -334,6 +361,27 @@ public:
     }
 
     static void setItem(IAsyContext*, IAsyItem* item, AsyFfi::pen const& value)
+    {
+        item->setRawPointer(value.ptr);
+    }
+};
+
+// --- record (user-defined struct instance) ---
+//
+// A struct instance is stored in an item as a raw pointer to its
+// IAsyVarFrame, so the conversion is a plain pointer round-trip (no Asy
+// allocation, context unused).
+
+template<>
+class ItemFunctions<AsyFfi::record>
+{
+public:
+    static AsyFfi::record getItem(IAsyContext*, IAsyItem const* item)
+    {
+        return AsyFfi::record(static_cast<IAsyVarFrame*>(item->asRawPointer()));
+    }
+
+    static void setItem(IAsyContext*, IAsyItem* item, AsyFfi::record const& value)
     {
         item->setRawPointer(value.ptr);
     }
