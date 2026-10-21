@@ -203,7 +203,7 @@ to build a loadable plugin. It takes care of the fiddly parts: a `SHARED`
 target with `-fPIC` and C++20, the `asyffi.h` + `asyffihelpers/` include dirs
 (reusing the header location the helper build already resolved -- you do **not**
 re-specify `ASYFFI_HEADER_DOWNLOAD_URL`), and the correct output name
-(`lib<name>.so` on Linux, `<name>.dll` on Windows).
+(`lib<name>.so` on Linux, `lib<name>.dll` on Windows).
 
 ```cmake
 # In a consumer CMake project that has the asyffi_helper target available
@@ -217,11 +217,12 @@ asyffi_add_plugin(myplug myplug.cc)
 ```
 
 A fresh, minimal consumer that just calls `asyffi_add_plugin(hello hello.cc)`
-produces `libhello.so` (Linux) / `hello.dll` (Windows) that `asy` can load.
+produces `libhello.so` (Linux) / `libhello.dll` (Windows) that `asy` can load.
 
 Details:
 - `LIBNAME <name>` sets the output file name; a leading `lib` is stripped, so
-  `LIBNAME hello` and `LIBNAME libhello` both give `libhello.so`.
+  `LIBNAME hello` and `LIBNAME libhello` both give `libhello.so`
+  (Linux) / `libhello.dll` (Windows).
 - Symbol export is handled by `asyffi.h`: the generated
   `registerAsymptotePlugin` entry point carries `ASY_FFI_EXPORT`
   (`[[gnu::visibility("default")]]` on ELF / `__declspec(dllexport)` on

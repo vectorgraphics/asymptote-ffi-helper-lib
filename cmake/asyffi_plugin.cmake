@@ -12,7 +12,7 @@
 #     NOT need to re-specify ASYFFI_HEADER_DOWNLOAD_URL);
 #   - the correct output name (lib<name>.so on Linux, lib<name>.dll on Windows);
 #   - an optional copy step that drops the built library into an Asymptote
-#     search-path directory so the plugin can be `import <name>`'d directly.
+#     search-path directory so the plugin can be `import lib<name>`'d directly.
 #
 # Usage (from a consumer project that has the asyffi_helper target available,
 # e.g. via add_subdirectory of this library):
