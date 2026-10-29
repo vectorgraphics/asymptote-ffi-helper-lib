@@ -9,7 +9,7 @@
 // AsyFfi::registerFunction: the lambda's leading AsyFfi::Context parameter is
 // the Asymptote host context (not an Asymptote argument -- the machinery
 // excludes it from the signature), and the remaining parameter (path) is
-// inferred automatically. No hand-written metadata, no manual arg unpacking.
+// inferred automatically.
 
 #include <asyffihelper.h>
 
@@ -23,10 +23,11 @@ REGISTER_FN_SIG
         registerer, "createFrame",
         [](Context ctx, path p) -> picture {
             auto* pic = ctx->createPicture(false);
-            auto* pen = ctx.createNewPen({{.red = 1.0, .green = 0.0, .blue = 0.0, .grey = 0.0}});
-            pic->appendDrawElement(ctx->createDrawElementFromPath(p.ptr, pen, nullptr));
+            auto* pen = ctx.createNewPen({{.red = 1.0, .green = 0.0,
+                  .blue = 0.0, .grey = 0.0}});
+            pic->appendDrawElement(ctx->createDrawElementFromPath(p.ptr, pen,
+                                                                  nullptr));
             return picture{pic};
         }
     );
 }
-

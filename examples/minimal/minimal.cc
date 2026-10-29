@@ -2,8 +2,7 @@
 //
 // Registers a single function:  int doubleIt(int)
 //
-// No hand-written type metadata and no manual argument unpacking -- the
-// AsyFfi::registerFunction template infers the Asymptote signature straight
+// The AsyFfi::registerFunction template infers the Asymptote signature
 // from the lambda's C++ signature.
 #include <asyffihelper.h>
 
@@ -20,4 +19,3 @@ REGISTER_FN_SIG
         registerer, "doubleIt", [](int64_t x) -> int64_t { return 2 * x; }
     );
 }
-

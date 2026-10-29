@@ -1,3 +1,3 @@
 import libclip;
-frame f = libclip.clip(scale(40)*unitcircle);
+frame f=clipRandomPaths(scale(40)*unitcircle);
 add(f);

@@ -1,9 +1,9 @@
 // struct.cc -- create and read instances of a user-defined Asymptote struct.
 //
 // Registers:
-//   StructReturnData createRandomData()        -- returns a new struct instance
-//   int              doubleX(StructReturnData r)  -- reads a struct argument
-//   StructReturnData copyStruct(StructReturnData r)  -- independent copy, x += 1
+//   StructReturnData createRandomData():          returns new struct instance
+//   int              doubleX(StructReturnData r): reads a struct argument
+//   StructReturnData copyStruct(StructReturnData r): independent copy, x += 1
 //
 // Struct types are *user-defined* Asymptote structs (defined in
 // struct_recfile.asy, loaded at registration), so their return/argument types
@@ -11,11 +11,12 @@
 // escape-hatch overload: a runtime (record) type in the metadata plus a raw
 // foreign-function body.
 //
-// The struct type is looked up once with AsyFfi::Struct. Fields are written and
-// read with ManagedRecord::set/get, and struct values cross the boundary as an
-// AsyFfi::record (a wrapper around the instance's IAsyVarFrame): an argument is
-// read with AsyFfi::fromItem<AsyFfi::record> (doubleX, copyStruct) and a return
-// value is written with AsyFfi::toItem<AsyFfi::record> (copyStruct).
+// The struct type is looked up once with AsyFfi::Struct. Fields are written
+// and read with ManagedRecord::set/get, and struct values cross the boundary
+// as an AsyFfi::record (a wrapper around the instance's IAsyVarFrame): an
+// argument is read with AsyFfi::fromItem<AsyFfi::record>(doubleX, copyStruct)
+// and a return value is written with
+// AsyFfi::toItem<AsyFfi::record> (copyStruct).
 
 #include <asyffihelper.h>
 
@@ -40,10 +41,9 @@ ASY_FOREIGN_FUNC_SIG(createRandomData)
 }
 
 // Read the "x" field of a struct argument and return 2*x.
-//
 // The incoming struct is pulled out as an AsyFfi::record (a wrapper around the
-// instance's IAsyVarFrame) via the escape-hatch argument item; ManagedRecord::get
-// then reads the field.
+// instance's IAsyVarFrame) via the escape-hatch argument item;
+// ManagedRecord::get then reads the field.
 ASY_FOREIGN_FUNC_SIG(doubleX)
 {
     AsyFfi::record const r = AsyFfi::fromItem<AsyFfi::record>(context, args->getNumberedArg(0));
@@ -53,21 +53,23 @@ ASY_FOREIGN_FUNC_SIG(doubleX)
 }
 
 // Return a fresh, independent instance derived from the argument.
-//
-// Reads the incoming struct as an AsyFfi::record, builds a new instance, copies
-// its fields, then modifies the copy (x += 1) and writes it back out through the
-// same proxy (AsyFfi::toItem<AsyFfi::record>). This exercises the record proxy in
-// both directions and shows the returned struct is a separate, writable value:
-// the original argument is left untouched by the modification.
+// Reads the incoming struct as an AsyFfi::record, builds a new instance,
+// copies its fields, then modifies the copy (x += 1) and writes it back out
+// through the same proxy (AsyFfi::toItem<AsyFfi::record>).
+// This exercises the record proxy in both directions and shows the returned
+// struct is a separate, writable value: the original argument is left
+// untouched by the modification.
 ASY_FOREIGN_FUNC_SIG(copyStruct)
 {
-    AsyFfi::record const in = AsyFfi::fromItem<AsyFfi::record>(context, args->getNumberedArg(0));
+    AsyFfi::record const in =
+      AsyFfi::fromItem<AsyFfi::record>(context, args->getNumberedArg(0));
     AsyFfiHelpers::Structs::ManagedRecord mr(structRecord);
 
     IAsyVarFrame* out = mr.createNewInstance(context);
     mr.set(context, out, "x", mr.get<int64_t>(context, in.ptr, "x") + 1);
     mr.set(context, out, "y", mr.get<double>(context, in.ptr, "y"));
-    mr.set<std::string>(context, out, "z", mr.get<std::string>(context, in.ptr, "z"));
+    mr.set<std::string>(context, out, "z",
+                        mr.get<std::string>(context, in.ptr, "z"));
 
     AsyFfi::toItem<AsyFfi::record>(context, returnValue, AsyFfi::record{out});
 }
@@ -77,18 +79,19 @@ DECLARE_REGISTER_FN;
 
 REGISTER_FN_SIG
 {
-    // Look up the struct type once; keep the record around for the function bodies.
-    AsyFfi::Struct const data(registerer, "struct_recfile", "StructReturnData");
+    // Look up the struct type once; keep the record around for the
+    // function bodies.
+    AsyFfi::Struct const data(registerer,"struct_recfile","StructReturnData");
     structRecord = data.record();
 
     // createRandomData() -> StructReturnData  (zero-arg factory case).
     AsyFfi::registerFunction(
-        registerer, "createRandomData", &createRandomData, data.zeroArgMetadata()
+        registerer,"createRandomData",&createRandomData,data.zeroArgMetadata()
     );
 
     // doubleX(StructReturnData r) -> int  (struct as an argument).
-    Asy::FnArgMetadata const arg{.type = data.typeInfo(), .name = "r", .optional = false,
-                                 .explicitArgs = false};
+    Asy::FnArgMetadata const arg{.type = data.typeInfo(), .name = "r",
+      .optional = false,.explicitArgs = false};
     Asy::FunctionTypeMetadata const meta{
         .returnType = {.baseType = Asy::BaseTypes::Integer, .extraData = {}},
         .numArgs = 1,
@@ -96,7 +99,8 @@ REGISTER_FN_SIG
     };
     AsyFfi::registerFunction(registerer, "doubleX", &doubleX, meta);
 
-    // copyStruct(StructReturnData r) -> StructReturnData (struct arg + struct return).
+    // copyStruct(StructReturnData r) ->
+    // StructReturnData(struct arg + struct return).
     Asy::FunctionTypeMetadata const copyMeta{
         .returnType = data.typeInfo(),
         .numArgs = 1,
